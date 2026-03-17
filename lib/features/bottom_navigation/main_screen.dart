@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../theme/colors.dart';
 import '../home/home_screen.dart';
 import '../recipes/recipes_screen.dart';
 import '../saved/saved_screen.dart';
@@ -38,20 +39,20 @@ class MainContent extends StatelessWidget {
         children: screens,
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(13),
+              color: AppColors.shadow,
               blurRadius: 10,
-              offset: const Offset(0, -4),
+              offset: Offset(0, -4),
             ),
           ],
         ),
         child: NavigationBar(
           selectedIndex: viewModel.currentIndex,
           onDestinationSelected: viewModel.setIndex,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.surface,
           indicatorColor: Colors.transparent, // Disable default pill indicator for custom look
           destinations: [
             _buildNavigationDestination(

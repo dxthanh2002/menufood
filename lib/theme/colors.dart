@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const Color primary = Colors.deepPurple;
   static const Color secondary = Colors.amber;
-  static const Color background = Color(0xFFF5F5F5);
+  static const Color background = Colors.white;
   static const Color surface = Colors.white;
   static const Color error = Colors.redAccent;
   
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   
-  // Navigation Colors
-  static const Color activeTab = Color(0xFFFF8C00); // Orange
-  static const Color inactiveTab = Color(0xFF94A3B8); // Blue-grey
+  // Navigation & UI Elements
+  static const Color navActive = Color(0xFFFF8C00); // Brand Orange
+  static const Color navInactive = Color(0xFF94A3B8); // Slate Grey
+  static const Color shadow = Color(0x0D000000); // Black with 5% opacity
 }

@@ -33,25 +33,25 @@ class AppTheme {
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
-              color: AppColors.activeTab,
+              color: AppColors.navActive,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             );
           }
           return const TextStyle(
-            color: AppColors.inactiveTab,
+            color: AppColors.navInactive,
             fontSize: 12,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const IconThemeData(
-              color: AppColors.activeTab,
+              color: AppColors.navActive,
               size: 28,
             );
           }
           return const IconThemeData(
-            color: AppColors.inactiveTab,
+            color: AppColors.navInactive,
             size: 28,
           );
         }),
