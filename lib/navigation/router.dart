@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../features/home/home_screen.dart';
+import '../features/bottom_navigation/main_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case Routes.main:
+        return MaterialPageRoute(builder: (_) => const MainScreen());
       case Routes.home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       // case Routes.profile:

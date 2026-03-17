@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AI Menu Flutter',
       theme: AppTheme.lightTheme,
-      initialRoute: Routes.home,
+      initialRoute: Routes.main,
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
     );

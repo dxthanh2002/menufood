@@ -9,4 +9,8 @@ class AppColors {
   
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
+  
+  // Navigation Colors
+  static const Color activeTab = Color(0xFFFF8C00); // Orange
+  static const Color inactiveTab = Color(0xFF94A3B8); // Blue-grey
 }

@@ -27,6 +27,35 @@ class AppTheme {
         bodyLarge: TextStyle(color: AppColors.textPrimary),
         bodyMedium: TextStyle(color: AppColors.textSecondary),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.surface,
+        indicatorColor: Colors.transparent,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: AppColors.activeTab,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            );
+          }
+          return const TextStyle(
+            color: AppColors.inactiveTab,
+            fontSize: 12,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(
+              color: AppColors.activeTab,
+              size: 28,
+            );
+          }
+          return const IconThemeData(
+            color: AppColors.inactiveTab,
+            size: 28,
+          );
+        }),
+      ),
     );
   }
 }
