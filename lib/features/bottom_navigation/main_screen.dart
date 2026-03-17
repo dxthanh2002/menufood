@@ -5,6 +5,7 @@ import '../home/home_screen.dart';
 import '../recipes/recipes_screen.dart';
 import '../saved/saved_screen.dart';
 import '../history/history_screen.dart';
+import '../user_setting/user_setting_screen.dart';
 import 'navigation_viewmodel.dart';
 
 class MainScreen extends StatelessWidget {
@@ -30,7 +31,8 @@ class MainContent extends StatelessWidget {
       const HomeScreen(),
       const RecipesScreen(),
       const SavedScreen(),
-      const HistoryScreen(),
+      const HistoryScreen(), // Placeholder for Profile or History
+      const UserSettingScreen(),
     ];
 
     return Scaffold(
@@ -82,6 +84,13 @@ class MainContent extends StatelessWidget {
               currentIndex: viewModel.currentIndex,
               icon: Icons.history_rounded,
               label: 'History',
+            ),
+            _buildNavigationDestination(
+              context: context,
+              index: 4,
+              currentIndex: viewModel.currentIndex,
+              icon: Icons.settings_rounded,
+              label: 'Settings',
             ),
           ],
         ),
