@@ -20,6 +20,7 @@ MenuAI is a client-side Flutter application with a feature-oriented presentation
 - `lib/main.dart` calls `WidgetsFlutterBinding.ensureInitialized()`
 - `setupLocator()` registers app dependencies
 - `MaterialApp` sets `initialRoute` to onboarding and uses `AppRouter.generateRoute`
+- `AppTheme.lightTheme` also owns the default light-surface status bar overlay style through `AppBarTheme.systemOverlayStyle`
 
 ## Routing
 
@@ -52,6 +53,7 @@ Known routes:
 
 - `MainScreen` hosts bottom navigation
 - `NavigationViewModel` controls selected tab index
+- Root tabs now share a common `RootTabAppBar` contract for centered titles and optional leading/trailing actions
 
 ### Home To Recipe Flow
 
@@ -73,6 +75,7 @@ Known routes:
 - `AppColors` provides the palette
 - `AppTheme.lightTheme` defines the Material theme
 - `Responsive` contains width/height/scale helpers
+- `RootTabAppBar` standardizes top-bar layout for the main tabs
 
 ## External Integrations
 

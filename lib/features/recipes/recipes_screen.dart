@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../bottom_navigation/root-tab-app-bar.dart';
 import '../../theme/colors.dart';
 import 'recipes_viewmodel.dart';
 import 'widgets/recipe_card.dart';
@@ -13,46 +14,15 @@ class RecipesScreen extends StatelessWidget {
       create: (_) => RecipesViewModel(),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.restaurant_menu, color: AppColors.primary, size: 32),
-                const SizedBox(width: 8),
-                const Text(
-                  'Recipes',
-                  style: TextStyle(
-                    color: Color(0xFF1E293B), // slate-900
-                    fontWeight: FontWeight.w800,
-                    fontSize: 24,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
+        appBar: RootTabAppBar(
+          title: 'Recipes',
+          trailing: RootTabAppBar.buildActionButton(
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.accentBrown,
             ),
+            onPressed: () {},
           ),
-          leadingWidth: 200,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE2E8F0).withOpacity(0.5), // slate-200
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.notifications_none, color: Color(0xFF334155), size: 20), // slate-700
-                  onPressed: () {},
-                ),
-              ),
-            ),
-          ],
         ),
         body: const RecipesContent(),
       ),
@@ -87,10 +57,19 @@ class RecipesContent extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search recipes, ingredients...',
-                hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14), // slate-400
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF94A3B8)), // slate-400
+                hintStyle: const TextStyle(
+                  color: Color(0xFF94A3B8),
+                  fontSize: 14,
+                ), // slate-400
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: Color(0xFF94A3B8),
+                ), // slate-400
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 16,
+                ),
               ),
             ),
           ),
@@ -139,12 +118,17 @@ class RecipesContent extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => viewModel.setSelectedCategory(index),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected ? AppColors.primary : AppColors.surface,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : const Color(0xFFF1F5F9), // slate-100
+                        color: isSelected
+                            ? AppColors.primary
+                            : const Color(0xFFF1F5F9), // slate-100
                         width: 1,
                       ),
                       boxShadow: isSelected
@@ -161,7 +145,9 @@ class RecipesContent extends StatelessWidget {
                       child: Text(
                         viewModel.categories[index],
                         style: TextStyle(
-                          color: isSelected ? Colors.white : const Color(0xFF475569), // slate-600
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF475569), // slate-600
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),

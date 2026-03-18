@@ -41,6 +41,8 @@ This repository is a Flutter application with a feature-based structure and a UI
 - State uses `ChangeNotifier` with `provider`
 - Dependency registration happens in `lib/service_locator.dart`
 - Theme primitives live in `lib/theme/colors.dart` and `lib/theme/theme_data.dart`
+- Main-tab screens now share `lib/features/bottom_navigation/root-tab-app-bar.dart`
+- Light-theme status bar behavior is centralized in `lib/theme/theme_data.dart`
 
 ## Data And Service State
 
@@ -60,7 +62,7 @@ This repository is a Flutter application with a feature-based structure and a UI
 
 ## Repomix Status
 
-`repomix-output.xml` was not generated in this session. `repomix` was available but failed under sandbox restrictions, and elevated execution was not approved.
+`repomix-output.xml` was regenerated in this session.
 
 ## Unresolved Questions
 

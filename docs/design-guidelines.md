@@ -23,6 +23,7 @@ Source: `lib/theme/colors.dart`
 - Use high-contrast CTA buttons for primary actions
 - Keep navigation icons and labels simple and readable
 - Use large, friendly headings for feature entry points
+- Use the shared root-tab app bar pattern for main-tab headers instead of screen-specific header layouts
 
 ## Layout
 
@@ -43,6 +44,8 @@ Source: `lib/theme/colors.dart`
 - Reuse `AppColors` instead of inline ad hoc color values where possible
 - Prefer route constants over string literals for navigation
 - Keep ingredient, recipe, and settings cards visually related
+- Keep main-tab titles centered with balanced leading/trailing action slots
+- Use the theme-level light-surface status bar styling instead of per-screen system UI overrides
 
 ## Accessibility Notes
 
@@ -53,7 +56,7 @@ Source: `lib/theme/colors.dart`
 ## Current Design Debt
 
 - Some screens still use inline colors instead of centralized tokens
-- Visual consistency between tabs is not fully unified yet
+- Main-tab header structure is now standardized, but non-tab detail screens still vary by flow
 - Placeholder screens and stub actions weaken UX continuity
 
 ## Unresolved Questions

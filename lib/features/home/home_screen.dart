@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../bottom_navigation/root-tab-app-bar.dart';
+import '../bottom_navigation/navigation_viewmodel.dart';
 import '../../theme/colors.dart';
 import '../../utils/responsive_util.dart';
 import 'home_viewmodel.dart';
@@ -16,39 +18,29 @@ class HomeScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             backgroundColor: AppColors.background,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: Icon(Icons.menu, color: AppColors.textPrimary),
+            appBar: RootTabAppBar(
+              title: 'MenuAI',
+              leading: RootTabAppBar.buildActionButton(
+                icon: const Icon(
+                  Icons.menu_rounded,
+                  color: AppColors.accentBrown,
+                ),
                 onPressed: () {},
               ),
-              title: Text(
-                'MenuAI',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: Responsive.scale(context, 20),
+              trailing: RootTabAppBar.buildActionButton(
+                icon: const Icon(
+                  Icons.account_circle_rounded,
+                  color: AppColors.primary,
                 ),
+                backgroundColor: AppColors.primary.withOpacity(0.12),
+                onPressed: () {
+                  try {
+                    context.read<NavigationViewModel>().setIndex(4);
+                  } on ProviderNotFoundException {
+                    Navigator.pushNamed(context, Routes.settings);
+                  }
+                },
               ),
-              centerTitle: true,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.account_circle, color: AppColors.primary),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/settings');
-                      },
-                    ),
-                  ),
-                ),
-              ],
             ),
             body: LayoutBuilder(
               builder: (context, constraints) {
@@ -72,14 +64,20 @@ class HomeScreen extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: Responsive.width(context, 0.08),
+                                      horizontal: Responsive.width(
+                                        context,
+                                        0.08,
+                                      ),
                                     ),
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                         'Scan your ingredients',
                                         style: TextStyle(
-                                          fontSize: Responsive.scale(context, 26),
+                                          fontSize: Responsive.scale(
+                                            context,
+                                            26,
+                                          ),
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.textPrimary,
                                         ),
@@ -87,10 +85,15 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: Responsive.height(context, 0.005)),
+                                  SizedBox(
+                                    height: Responsive.height(context, 0.005),
+                                  ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: Responsive.width(context, 0.12),
+                                      horizontal: Responsive.width(
+                                        context,
+                                        0.12,
+                                      ),
                                     ),
                                     child: Text(
                                       "Point your camera at what's in your fridge",
@@ -101,22 +104,37 @@ class HomeScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  SizedBox(height: Responsive.height(context, 0.03)),
-                                  
+                                  SizedBox(
+                                    height: Responsive.height(context, 0.03),
+                                  ),
+
                                   // Camera Button with Glow Effect
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
                                       Container(
-                                        width: Responsive.scale(context, 120).clamp(90.0, 140.0).toDouble(),
-                                        height: Responsive.scale(context, 120).clamp(90.0, 140.0).toDouble(),
+                                        width: Responsive.scale(
+                                          context,
+                                          120,
+                                        ).clamp(90.0, 140.0).toDouble(),
+                                        height: Responsive.scale(
+                                          context,
+                                          120,
+                                        ).clamp(90.0, 140.0).toDouble(),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: AppColors.primary.withOpacity(0.3),
-                                              blurRadius: Responsive.scale(context, 35),
-                                              spreadRadius: Responsive.scale(context, 8),
+                                              color: AppColors.primary
+                                                  .withOpacity(0.3),
+                                              blurRadius: Responsive.scale(
+                                                context,
+                                                35,
+                                              ),
+                                              spreadRadius: Responsive.scale(
+                                                context,
+                                                8,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -127,18 +145,31 @@ class HomeScreen extends StatelessWidget {
                                           color: AppColors.primary,
                                           shape: const CircleBorder(),
                                           elevation: 6,
-                                          shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                                          shadowColor: AppColors.primary
+                                              .withValues(alpha: 0.4),
                                           child: GestureDetector(
                                             behavior: HitTestBehavior.opaque,
                                             onTap: () {
-                                              Navigator.pushNamed(context, Routes.scanner);
+                                              Navigator.pushNamed(
+                                                context,
+                                                Routes.scanner,
+                                              );
                                             },
                                             child: SizedBox(
-                                              width: Responsive.scale(context, 85).clamp(65.0, 100.0).toDouble(),
-                                              height: Responsive.scale(context, 85).clamp(65.0, 100.0).toDouble(),
+                                              width: Responsive.scale(
+                                                context,
+                                                85,
+                                              ).clamp(65.0, 100.0).toDouble(),
+                                              height: Responsive.scale(
+                                                context,
+                                                85,
+                                              ).clamp(65.0, 100.0).toDouble(),
                                               child: Icon(
                                                 Icons.photo_camera_rounded,
-                                                size: Responsive.scale(context, 40).clamp(30.0, 50.0).toDouble(),
+                                                size: Responsive.scale(
+                                                  context,
+                                                  40,
+                                                ).clamp(30.0, 50.0).toDouble(),
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -147,9 +178,11 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  
-                                  SizedBox(height: Responsive.height(context, 0.03)),
-                                  
+
+                                  SizedBox(
+                                    height: Responsive.height(context, 0.03),
+                                  ),
+
                                   // Upload Button
                                   OutlinedButton.icon(
                                     onPressed: () {},
@@ -165,13 +198,26 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: AppColors.primary,
-                                      side: BorderSide(color: AppColors.primary.withOpacity(0.2), width: 2),
+                                      side: BorderSide(
+                                        color: AppColors.primary.withOpacity(
+                                          0.2,
+                                        ),
+                                        width: 2,
+                                      ),
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: Responsive.width(context, 0.08),
-                                        vertical: Responsive.height(context, 0.012),
+                                        horizontal: Responsive.width(
+                                          context,
+                                          0.08,
+                                        ),
+                                        vertical: Responsive.height(
+                                          context,
+                                          0.012,
+                                        ),
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(Responsive.scale(context, 30)),
+                                        borderRadius: BorderRadius.circular(
+                                          Responsive.scale(context, 30),
+                                        ),
                                       ),
                                       textStyle: const TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -182,7 +228,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          
+
                           // Discovery Section
                           Container(
                             padding: EdgeInsets.fromLTRB(
@@ -193,7 +239,9 @@ class HomeScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.5),
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(32),
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,12 +252,17 @@ class HomeScreen extends StatelessWidget {
                                     fontSize: Responsive.scale(context, 10),
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
-                                    color: AppColors.textSecondary.withOpacity(0.6),
+                                    color: AppColors.textSecondary.withOpacity(
+                                      0.6,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 16),
                                 SizedBox(
-                                  height: Responsive.scale(context, 140).clamp(120.0, 180.0).toDouble(),
+                                  height: Responsive.scale(
+                                    context,
+                                    140,
+                                  ).clamp(120.0, 180.0).toDouble(),
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     physics: const BouncingScrollPhysics(),
@@ -254,7 +307,10 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildDishItem(BuildContext context, String name, String imageUrl) {
-    final itemWidth = Responsive.scale(context, 120).clamp(100.0, 150.0).toDouble();
+    final itemWidth = Responsive.scale(
+      context,
+      120,
+    ).clamp(100.0, 150.0).toDouble();
     return Container(
       width: itemWidth,
       margin: const EdgeInsets.only(right: 16),

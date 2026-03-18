@@ -46,6 +46,8 @@ These standards describe the codebase as it exists today and the conventions fut
 - Use `AppColors` and `AppTheme` as the first source of truth
 - Reuse `Responsive` utility for layout scaling where the codebase already does so
 - Keep typography and component styling consistent with the existing warm brand palette
+- Centralize light-theme status bar styling in `lib/theme/theme_data.dart`
+- Reuse `lib/features/bottom_navigation/root-tab-app-bar.dart` for main-tab headers instead of duplicating app-bar structure per screen
 
 ## Models
 

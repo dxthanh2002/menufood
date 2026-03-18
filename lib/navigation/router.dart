@@ -20,7 +20,9 @@ class AppRouter {
       case Routes.home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case Routes.settings:
-        return MaterialPageRoute(builder: (_) => const UserSettingScreen());
+        return MaterialPageRoute(
+          builder: (_) => const UserSettingScreen(showBackButton: true),
+        );
       case Routes.scanner:
         return MaterialPageRoute(builder: (_) => const ScannerScreen());
       case Routes.confirmIngredients:

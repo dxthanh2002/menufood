@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
@@ -16,9 +17,16 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: AppColors.background,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppColors.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
       ),
       textTheme: GoogleFonts.interTextTheme(
         const TextTheme(
@@ -41,22 +49,13 @@ class AppTheme {
               fontSize: 12,
             );
           }
-          return const TextStyle(
-            color: AppColors.navInactive,
-            fontSize: 12,
-          );
+          return const TextStyle(color: AppColors.navInactive, fontSize: 12);
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(
-              color: AppColors.navActive,
-              size: 28,
-            );
+            return const IconThemeData(color: AppColors.navActive, size: 28);
           }
-          return const IconThemeData(
-            color: AppColors.navInactive,
-            size: 28,
-          );
+          return const IconThemeData(color: AppColors.navInactive, size: 28);
         }),
       ),
     );

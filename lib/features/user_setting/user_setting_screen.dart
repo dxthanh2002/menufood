@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '../bottom_navigation/root-tab-app-bar.dart';
 import '../../theme/colors.dart';
 import '../../utils/responsive_util.dart';
 
 class UserSettingScreen extends StatelessWidget {
-  const UserSettingScreen({super.key});
+  const UserSettingScreen({super.key, this.showBackButton = false});
+
+  final bool showBackButton;
 
   @override
   Widget build(BuildContext context) {
@@ -12,32 +15,27 @@ class UserSettingScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, 
-            color: AppColors.textPrimary, 
-            size: Responsive.scale(context, 24).clamp(20.0, 28.0)
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          'Settings',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: Responsive.scale(context, 20).clamp(18.0, 24.0),
-          ),
-        ),
+      appBar: RootTabAppBar(
+        title: 'Settings',
+        leading: showBackButton
+            ? RootTabAppBar.buildActionButton(
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColors.accentBrown,
+                ),
+                onPressed: () => Navigator.maybePop(context),
+              )
+            : null,
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 8,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -116,17 +114,26 @@ class UserSettingScreen extends StatelessWidget {
                 Center(
                   child: TextButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
+                    icon: const Icon(
+                      Icons.logout_rounded,
+                      color: Colors.redAccent,
+                    ),
                     label: Text(
                       'Log Out',
                       style: TextStyle(
                         color: Colors.redAccent,
                         fontWeight: FontWeight.bold,
-                        fontSize: Responsive.scale(context, 16).clamp(14.0, 18.0),
+                        fontSize: Responsive.scale(
+                          context,
+                          16,
+                        ).clamp(14.0, 18.0),
                       ),
                     ),
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
                       ),
@@ -224,7 +231,10 @@ class UserSettingScreen extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: Responsive.scale(context, 12).clamp(10.0, 14.0),
+                        fontSize: Responsive.scale(
+                          context,
+                          12,
+                        ).clamp(10.0, 14.0),
                       ),
                     ),
                   ],
