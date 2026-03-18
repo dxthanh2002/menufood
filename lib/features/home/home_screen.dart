@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/colors.dart';
 import '../../utils/responsive_util.dart';
 import 'home_viewmodel.dart';
+import '../../navigation/routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -126,12 +127,12 @@ class HomeScreen extends StatelessWidget {
                                           color: AppColors.primary,
                                           shape: const CircleBorder(),
                                           elevation: 6,
-                                          shadowColor: AppColors.primary.withOpacity(0.4),
-                                          child: InkWell(
+                                          shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
                                             onTap: () {
-                                              // Navigate to camera
+                                              Navigator.pushNamed(context, Routes.scanner);
                                             },
-                                            customBorder: const CircleBorder(),
                                             child: SizedBox(
                                               width: Responsive.scale(context, 85).clamp(65.0, 100.0).toDouble(),
                                               height: Responsive.scale(context, 85).clamp(65.0, 100.0).toDouble(),

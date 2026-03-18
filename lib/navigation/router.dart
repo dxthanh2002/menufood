@@ -3,6 +3,8 @@ import '../features/home/home_screen.dart';
 import '../features/onboard_screen/onboard_screen.dart';
 import '../features/user_setting/user_setting_screen.dart';
 import '../features/bottom_navigation/main_screen.dart';
+import '../features/home/step1_scaner/scanner_screen.dart';
+import '../features/home/step2_confirm/confirm_ingredients_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -16,6 +18,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case Routes.settings:
         return MaterialPageRoute(builder: (_) => const UserSettingScreen());
+      case Routes.scanner:
+        return MaterialPageRoute(builder: (_) => const ScannerScreen());
+      case Routes.confirmIngredients:
+        return MaterialPageRoute(builder: (_) => const ConfirmIngredientsScreen());
       // case Routes.profile:
       //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
       default:

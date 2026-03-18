@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 enum _HandleType { topLeft, topRight, bottomLeft, bottomRight, left, right, move, none }
 
-class OCRSelectionOverlay extends StatefulWidget {
+class ScannerSelectionOverlay extends StatefulWidget {
   final ValueNotifier<Rect> selectionNotifier;
 
-  const OCRSelectionOverlay({super.key, required this.selectionNotifier});
+  const ScannerSelectionOverlay({super.key, required this.selectionNotifier});
 
   @override
-  State<OCRSelectionOverlay> createState() => _OCRSelectionOverlayState();
+  State<ScannerSelectionOverlay> createState() => _ScannerSelectionOverlayState();
 }
 
-class _OCRSelectionOverlayState extends State<OCRSelectionOverlay> {
+class _ScannerSelectionOverlayState extends State<ScannerSelectionOverlay> {
   _HandleType _activeHandle = _HandleType.none;
   static const double _hitRadius = 36.0;
   static const double _minSize = 50.0;
