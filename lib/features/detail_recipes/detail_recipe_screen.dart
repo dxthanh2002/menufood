@@ -33,89 +33,104 @@ class _DetailRecipeContent extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          DetailRecipeHero(recipe: recipe),
-          SliverToBoxAdapter(
-            child: Transform.translate(
-              offset: const Offset(0, -40),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(60),
-                    topRight: Radius.circular(60),
-                  ),
+      body: Stack(
+        children: [
+          const Positioned.fill(
+            child: ColoredBox(color: AppColors.background),
+          ),
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SizedBox(height: 320),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: DetailRecipeHeroHeader(recipe: recipe),
+          ),
+          Positioned.fill(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 280),
+              child: Material(
+                color: Colors.white,
+                clipBehavior: Clip.antiAlias,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(36),
+                  topRight: Radius.circular(36),
                 ),
-                padding: const EdgeInsets.fromLTRB(24, 50, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      recipe.title,
-                      style: GoogleFonts.inter(
-                        fontSize: 31,
-                        fontWeight: FontWeight.w800,
-                        height: 1.05,
-                        color: AppColors.textPrimary,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 50, 24, 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        recipe.title,
+                        style: GoogleFonts.inter(
+                          fontSize: 31,
+                          fontWeight: FontWeight.w800,
+                          height: 1.05,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      recipe.description,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        height: 1.5,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    DetailRecipeInfoBar(recipe: recipe),
-                    const SizedBox(height: 30),
-                    DetailRecipeSectionTitle(
-                      title: 'Ingredients',
-                      trailing: Text(
-                        recipe.servings,
+                      const SizedBox(height: 10),
+                      Text(
+                        recipe.description,
                         style: GoogleFonts.inter(
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                          height: 1.5,
+                          color: AppColors.textSecondary,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...List.generate(
-                      recipe.ingredients.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: DetailRecipeIngredientTile(
-                          ingredient: recipe.ingredients[index],
-                          isChecked: viewModel.isIngredientChecked(index),
-                          onChanged: () => viewModel.toggleIngredient(index),
+                      const SizedBox(height: 24),
+                      DetailRecipeInfoBar(recipe: recipe),
+                      const SizedBox(height: 30),
+                      DetailRecipeSectionTitle(
+                        title: 'Ingredients',
+                        trailing: Text(
+                          recipe.servings,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 18),
-                    const DetailRecipeSectionTitle(
-                      title: 'Step-by-step instructions',
-                    ),
-                    const SizedBox(height: 18),
-                    ...List.generate(
-                      recipe.instructions.length,
-                      (index) => Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index == recipe.instructions.length - 1
-                              ? 0
-                              : 22,
-                        ),
-                        child: DetailRecipeInstructionTile(
-                          index: index + 1,
-                          instruction: recipe.instructions[index],
+                      const SizedBox(height: 16),
+                      ...List.generate(
+                        recipe.ingredients.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: DetailRecipeIngredientTile(
+                            ingredient: recipe.ingredients[index],
+                            isChecked: viewModel.isIngredientChecked(index),
+                            onChanged: () => viewModel.toggleIngredient(index),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 18),
+                      const DetailRecipeSectionTitle(
+                        title: 'Step-by-step instructions',
+                      ),
+                      const SizedBox(height: 18),
+                      ...List.generate(
+                        recipe.instructions.length,
+                        (index) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index == recipe.instructions.length - 1
+                                ? 0
+                                : 22,
+                          ),
+                          child: DetailRecipeInstructionTile(
+                            index: index + 1,
+                            instruction: recipe.instructions[index],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -52,6 +52,55 @@ class DetailRecipeHero extends StatelessWidget {
   }
 }
 
+class DetailRecipeHeroHeader extends StatelessWidget {
+  const DetailRecipeHeroHeader({super.key, required this.recipe});
+
+  final Step3ResultRecipe recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 320,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(recipe.imageUrl, fit: BoxFit.cover),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.5),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _HeroActionButton(
+                    icon: Icons.arrow_back_rounded,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  const Spacer(),
+                  const _HeroActionButton(icon: Icons.favorite_border_rounded),
+                  const SizedBox(width: 8),
+                  const _HeroActionButton(icon: Icons.share_rounded),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class DetailRecipeInfoBar extends StatelessWidget {
   const DetailRecipeInfoBar({super.key, required this.recipe});
 
