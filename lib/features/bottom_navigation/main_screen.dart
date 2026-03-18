@@ -9,12 +9,14 @@ import '../user_setting/user_setting_screen.dart';
 import 'navigation_viewmodel.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => NavigationViewModel(),
+      create: (_) => NavigationViewModel(initialIndex: initialIndex),
       child: const MainContent(),
     );
   }
@@ -36,78 +38,63 @@ class MainContent extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: viewModel.currentIndex,
-        children: screens,
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadow,
-              blurRadius: 10,
-              offset: Offset(0, -4),
-            ),
-          ],
-        ),
-        child: NavigationBar(
-          selectedIndex: viewModel.currentIndex,
-          onDestinationSelected: viewModel.setIndex,
-          backgroundColor: AppColors.surface,
-          indicatorColor: Colors.transparent, // Disable default pill indicator for custom look
-          destinations: [
-            _buildNavigationDestination(
-              context: context,
-              index: 0,
-              currentIndex: viewModel.currentIndex,
-              icon: Icons.home_rounded,
-              label: 'Home',
-            ),
-            _buildNavigationDestination(
-              context: context,
-              index: 1,
-              currentIndex: viewModel.currentIndex,
-              icon: Icons.soup_kitchen_rounded,
-              label: 'Recipes',
-            ),
-            _buildNavigationDestination(
-              context: context,
-              index: 2,
-              currentIndex: viewModel.currentIndex,
-              icon: Icons.bookmark_rounded,
-              label: 'Saved',
-            ),
-            _buildNavigationDestination(
-              context: context,
-              index: 3,
-              currentIndex: viewModel.currentIndex,
-              icon: Icons.history_rounded,
-              label: 'History',
-            ),
-            _buildNavigationDestination(
-              context: context,
-              index: 4,
-              currentIndex: viewModel.currentIndex,
-              icon: Icons.settings_rounded,
-              label: 'Settings',
-            ),
-          ],
-        ),
+      body: IndexedStack(index: viewModel.currentIndex, children: screens),
+      bottomNavigationBar: AppBottomNavigationBar(
+        currentIndex: viewModel.currentIndex,
+        onDestinationSelected: viewModel.setIndex,
       ),
     );
   }
+}
 
-  Widget _buildNavigationDestination({
-    required BuildContext context,
-    required int index,
-    required int currentIndex,
-    required IconData icon,
-    required String label,
-  }) {
-    return NavigationDestination(
-      icon: Icon(icon),
-      label: label,
+class AppBottomNavigationBar extends StatelessWidget {
+  const AppBottomNavigationBar({
+    super.key,
+    required this.currentIndex,
+    required this.onDestinationSelected,
+  });
+
+  final int currentIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 10,
+            offset: Offset(0, -4),
+          ),
+        ],
+      ),
+      child: NavigationBar(
+        selectedIndex: currentIndex,
+        onDestinationSelected: onDestinationSelected,
+        backgroundColor: AppColors.surface,
+        indicatorColor: Colors.transparent,
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+          NavigationDestination(
+            icon: Icon(Icons.soup_kitchen_rounded),
+            label: 'Recipes',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_rounded),
+            label: 'Saved',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history_rounded),
+            label: 'History',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_rounded),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 }

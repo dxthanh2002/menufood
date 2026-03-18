@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ScannerViewModel extends ChangeNotifier {
   CameraController? _controller;
@@ -9,6 +10,7 @@ class ScannerViewModel extends ChangeNotifier {
   List<CameraDescription> _cameras = [];
   int _currentCameraIndex = 0;
   String? _errorMessage;
+  final ImagePicker _imagePicker = ImagePicker();
 
   CameraController? get controller => _controller;
   bool get isInitialized => _isInitialized;
@@ -34,7 +36,11 @@ class ScannerViewModel extends ChangeNotifier {
       await _controller!.dispose();
     }
 
-    _controller = CameraController(camera, ResolutionPreset.high, enableAudio: false);
+    _controller = CameraController(
+      camera,
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
 
     try {
       await _controller!.initialize();
@@ -81,14 +87,29 @@ class ScannerViewModel extends ChangeNotifier {
 
     try {
       await _controller!.takePicture();
-      // Since it's only UI, we just notify we're done or return the file if needed.
-      // For now, let's just finish the "processing" state.
     } catch (e) {
       debugPrint('Capture error: $e');
       _errorMessage = 'Could not capture image. Please try again.';
     } finally {
       _isProcessing = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> pickImageFromGallery() async {
+    _errorMessage = null;
+
+    try {
+      final image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+      );
+      return image != null;
+    } catch (e) {
+      debugPrint('Gallery picker error: $e');
+      _errorMessage = 'Could not open photo library. Please try again.';
+      notifyListeners();
+      return false;
     }
   }
 

@@ -5,13 +5,20 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
   String selectedMealType = 'Breakfast';
   String selectedCuisine = 'Korean';
   List<String> selectedPreferences = ['Under 30 mins'];
+  final List<String> quickAddIngredients = [
+    'Salt',
+    'Pepper',
+    'Garlic',
+    'Olive Oil',
+    'Lemon',
+  ];
 
   final List<String> mealTypes = [
     'Breakfast',
     'Lunch',
     'Dinner',
     'Snack',
-    'Dessert'
+    'Dessert',
   ];
   final List<String> cuisines = [
     'Vietnamese',
@@ -19,7 +26,7 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
     'Japanese',
     'Western',
     'Chinese',
-    'Thai'
+    'Thai',
   ];
   final List<Map<String, dynamic>> preferenceOptions = [
     {'name': 'Easy to cook', 'icon': Icons.local_fire_department_rounded},
@@ -33,11 +40,20 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addIngredient(String ingredient) {
-    if (ingredient.isNotEmpty && !detectedIngredients.contains(ingredient)) {
-      detectedIngredients.add(ingredient);
+  bool addIngredient(String ingredient) {
+    final normalizedIngredient = ingredient.trim();
+    if (normalizedIngredient.isNotEmpty &&
+        !detectedIngredients.any(
+          (existingIngredient) =>
+              existingIngredient.toLowerCase() ==
+              normalizedIngredient.toLowerCase(),
+        )) {
+      detectedIngredients.add(normalizedIngredient);
       notifyListeners();
+      return true;
     }
+
+    return false;
   }
 
   void selectMealType(String mealType) {
@@ -58,7 +74,7 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   IconData getIngredientIcon(String name) {
     switch (name.toLowerCase()) {
       case 'tomato':

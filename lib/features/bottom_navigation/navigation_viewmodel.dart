@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NavigationViewModel extends ChangeNotifier {
-  int _currentIndex = 0;
+  NavigationViewModel({int initialIndex = 0}) : _currentIndex = initialIndex;
+
+  int _currentIndex;
 
   int get currentIndex => _currentIndex;
 

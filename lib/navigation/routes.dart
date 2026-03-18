@@ -6,5 +6,7 @@ class Routes {
   static const String onboard = '/onboard';
   static const String scanner = '/scanner';
   static const String confirmIngredients = '/confirm-ingredients';
+  static const String step3Result = '/step3-result';
+  static const String detailRecipe = '/detail-recipe';
   // Add more routes here
 }

@@ -68,8 +68,26 @@ class _ScannerContentState extends State<_ScannerContent>
     Navigator.pushNamed(context, Routes.confirmIngredients);
   }
 
-  void _onUploadPressed() {
-    // TODO: implement image picker
+  Future<void> _onUploadPressed() async {
+    final vm = context.read<ScannerViewModel>();
+    final isImageSelected = await vm.pickImageFromGallery();
+    if (!mounted) return;
+
+    if (vm.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vm.errorMessage!)),
+      );
+      vm.clearError();
+      return;
+    }
+
+    if (!isImageSelected) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Image selected from library.')),
+    );
   }
 
   @override
@@ -98,10 +116,7 @@ class _ScannerContentState extends State<_ScannerContent>
             top: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              bottom: false,
-              child: _buildTopBar(vm),
-            ),
+            child: SafeArea(bottom: false, child: _buildTopBar(vm)),
           ),
 
           // Bottom controls
@@ -109,10 +124,7 @@ class _ScannerContentState extends State<_ScannerContent>
             bottom: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              top: false,
-              child: _buildBottomControls(vm),
-            ),
+            child: SafeArea(top: false, child: _buildBottomControls(vm)),
           ),
 
           // Processing overlay
@@ -150,10 +162,7 @@ class _ScannerContentState extends State<_ScannerContent>
       child: Row(
         children: [
           // Close button
-          _circleButton(
-            icon: Icons.close,
-            onTap: () => Navigator.pop(context),
-          ),
+          _circleButton(icon: Icons.close, onTap: () => Navigator.pop(context)),
           const Spacer(),
           // Live Detection badge
           Container(
@@ -213,23 +222,20 @@ class _ScannerContentState extends State<_ScannerContent>
   }
 
   IconData _flashIcon(FlashMode m) => switch (m) {
-        FlashMode.off => Icons.flash_off,
-        FlashMode.auto => Icons.flash_auto,
-        FlashMode.always => Icons.flash_on,
-        FlashMode.torch => Icons.highlight,
-      };
+    FlashMode.off => Icons.flash_off,
+    FlashMode.auto => Icons.flash_auto,
+    FlashMode.always => Icons.flash_on,
+    FlashMode.torch => Icons.highlight,
+  };
 
   Widget _buildBottomControls(ScannerViewModel vm) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(32, 20, 32, 16),
+      padding: const EdgeInsets.fromLTRB(32, 20, 32, 36),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [
-            Colors.black.withValues(alpha: 0.7),
-            Colors.transparent,
-          ],
+          colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
         ),
       ),
       child: Column(
@@ -271,8 +277,11 @@ class _ScannerContentState extends State<_ScannerContent>
                 width: 1.5,
               ),
             ),
-            child: const Icon(Icons.photo_library_outlined,
-                color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.photo_library_outlined,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -297,7 +306,10 @@ class _ScannerContentState extends State<_ScannerContent>
         height: 76,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 4),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 4,
+          ),
         ),
         padding: const EdgeInsets.all(4),
         child: Container(
@@ -305,7 +317,11 @@ class _ScannerContentState extends State<_ScannerContent>
             shape: BoxShape.circle,
             color: AppColors.primary,
           ),
-          child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 30),
+          child: const Icon(
+            Icons.camera_alt_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
         ),
       ),
     );
