@@ -388,7 +388,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
                   cuisine,
                   style: GoogleFonts.inter(
                     fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                    fontWeight: FontWeight.w600,
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.textPrimary,
@@ -410,9 +410,12 @@ class _ConfirmIngredientsContent extends StatelessWidget {
       spacing: 10,
       runSpacing: 12,
       children: viewModel.preferenceOptions.map((pref) {
-        final isSelected = viewModel.selectedPreferences.contains(pref['name']);
+        final preferenceName = pref['name'] as String;
+        final isSelected = viewModel.selectedPreferences.contains(
+          preferenceName,
+        );
         return GestureDetector(
-          onTap: () => viewModel.togglePreference(pref['name']),
+          onTap: () => viewModel.togglePreference(preferenceName),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -440,10 +443,10 @@ class _ConfirmIngredientsContent extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  pref['name'],
+                  preferenceName,
                   style: GoogleFonts.inter(
                     fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                    fontWeight: FontWeight.w600,
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.textPrimary,

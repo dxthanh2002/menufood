@@ -4,7 +4,7 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
   List<String> detectedIngredients = ['Tomato', 'Egg', 'Onion', 'Beef'];
   String selectedMealType = 'Breakfast';
   String selectedCuisine = 'Korean';
-  List<String> selectedPreferences = ['Under 30 mins'];
+  final Set<String> selectedPreferences = {'Under 30 mins'};
   final List<String> quickAddIngredients = [
     'Salt',
     'Pepper',
@@ -67,10 +67,9 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
   }
 
   void togglePreference(String preference) {
-    if (selectedPreferences.contains(preference)) {
+    final wasAdded = selectedPreferences.add(preference);
+    if (!wasAdded) {
       selectedPreferences.remove(preference);
-    } else {
-      selectedPreferences.add(preference);
     }
     notifyListeners();
   }

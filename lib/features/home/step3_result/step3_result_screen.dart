@@ -71,7 +71,7 @@ class _Step3ResultContent extends StatelessWidget {
                     'Dishes you can cook',
                     style: GoogleFonts.inter(
                       color: AppColors.accentBrown,
-                      fontSize: 32,
+                      fontSize: 26,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
                     ),
@@ -81,7 +81,7 @@ class _Step3ResultContent extends StatelessWidget {
                     'Based on ingredients in your pantry',
                     style: GoogleFonts.inter(
                       color: AppColors.textSecondary,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
