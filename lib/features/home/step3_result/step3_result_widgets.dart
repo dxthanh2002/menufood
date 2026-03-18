@@ -55,9 +55,11 @@ class ResultRecipeCard extends StatelessWidget {
                           children: [
                             Text(
                               recipe.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.inter(
                                 color: AppColors.accentBrown,
-                                fontSize: 22,
+                                fontSize: 19,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),

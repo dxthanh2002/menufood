@@ -4,7 +4,6 @@ import '../../theme/colors.dart';
 import '../home/home_screen.dart';
 import '../recipes/recipes_screen.dart';
 import '../saved/saved_screen.dart';
-import '../history/history_screen.dart';
 import '../user_setting/user_setting_screen.dart';
 import 'navigation_viewmodel.dart';
 
@@ -33,7 +32,6 @@ class MainContent extends StatelessWidget {
       const HomeScreen(),
       const RecipesScreen(),
       const SavedScreen(),
-      const HistoryScreen(), // Placeholder for Profile or History
       const UserSettingScreen(),
     ];
 
@@ -84,10 +82,6 @@ class AppBottomNavigationBar extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.bookmark_rounded),
             label: 'Saved',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.history_rounded),
-            label: 'History',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_rounded),

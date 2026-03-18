@@ -115,12 +115,12 @@ class HomeScreen extends StatelessWidget {
                                       Container(
                                         width: Responsive.scale(
                                           context,
-                                          120,
-                                        ).clamp(90.0, 140.0).toDouble(),
+                                          140,
+                                        ).clamp(110.0, 160.0).toDouble(),
                                         height: Responsive.scale(
                                           context,
-                                          120,
-                                        ).clamp(90.0, 140.0).toDouble(),
+                                          140,
+                                        ).clamp(110.0, 160.0).toDouble(),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           boxShadow: [
@@ -129,11 +129,11 @@ class HomeScreen extends StatelessWidget {
                                                   .withOpacity(0.3),
                                               blurRadius: Responsive.scale(
                                                 context,
-                                                35,
+                                                40,
                                               ),
                                               spreadRadius: Responsive.scale(
                                                 context,
-                                                8,
+                                                10,
                                               ),
                                             ),
                                           ],
@@ -158,18 +158,18 @@ class HomeScreen extends StatelessWidget {
                                             child: SizedBox(
                                               width: Responsive.scale(
                                                 context,
-                                                85,
-                                              ).clamp(65.0, 100.0).toDouble(),
+                                                100,
+                                              ).clamp(80.0, 120.0).toDouble(),
                                               height: Responsive.scale(
                                                 context,
-                                                85,
-                                              ).clamp(65.0, 100.0).toDouble(),
+                                                100,
+                                              ).clamp(80.0, 120.0).toDouble(),
                                               child: Icon(
                                                 Icons.photo_camera_rounded,
                                                 size: Responsive.scale(
                                                   context,
-                                                  40,
-                                                ).clamp(30.0, 50.0).toDouble(),
+                                                  50,
+                                                ).clamp(40.0, 65.0).toDouble(),
                                                 color: Colors.white,
                                               ),
                                             ),

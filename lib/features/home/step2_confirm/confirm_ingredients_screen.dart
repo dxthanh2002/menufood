@@ -381,7 +381,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.3)
                         : AppColors.textSecondary.withValues(alpha: 0.1),
-                    width: isSelected ? 1.5 : 1,
+                    width: 1,
                   ),
                 ),
                 child: Text(
@@ -425,7 +425,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
                 color: isSelected
                     ? AppColors.primary.withValues(alpha: 0.3)
                     : AppColors.textSecondary.withValues(alpha: 0.1),
-                width: isSelected ? 1.5 : 1,
+                width: 1,
               ),
             ),
             child: Row(

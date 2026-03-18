@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -58,9 +60,9 @@ class _ScannerContentState extends State<_ScannerContent>
     if (!mounted) return;
 
     if (vm.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(vm.errorMessage!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(vm.errorMessage!)));
       vm.clearError();
       return;
     }
@@ -74,9 +76,9 @@ class _ScannerContentState extends State<_ScannerContent>
     if (!mounted) return;
 
     if (vm.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(vm.errorMessage!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(vm.errorMessage!)));
       vm.clearError();
       return;
     }
@@ -165,12 +167,9 @@ class _ScannerContentState extends State<_ScannerContent>
           _circleButton(icon: Icons.close, onTap: () => Navigator.pop(context)),
           const Spacer(),
           // Live Detection badge
-          Container(
+          _buildGlassSurface(
+            borderRadius: BorderRadius.circular(20),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.45),
-              borderRadius: BorderRadius.circular(20),
-            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -209,13 +208,10 @@ class _ScannerContentState extends State<_ScannerContent>
   Widget _circleButton({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: _buildGlassSurface(
         width: 42,
         height: 42,
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.35),
-          shape: BoxShape.circle,
-        ),
+        borderRadius: BorderRadius.circular(21),
         child: Icon(icon, color: Colors.white, size: 22),
       ),
     );
@@ -242,21 +238,56 @@ class _ScannerContentState extends State<_ScannerContent>
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Upload button
-              _buildUploadButton(),
-              const SizedBox(width: 24),
-              // Capture button (center, larger)
-              _buildCaptureButton(vm),
-              const SizedBox(width: 24),
-              // Spacer to balance layout
-              const SizedBox(width: 56),
+              _buildBottomControlSlot(child: _buildUploadButton()),
+              _buildBottomControlSlot(child: _buildCaptureButton(vm)),
+              const SizedBox(width: 88),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGlassSurface({
+    required Widget child,
+    required BorderRadius borderRadius,
+    EdgeInsetsGeometry padding = EdgeInsets.zero,
+    double? width,
+    double? height,
+  }) {
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding,
+          decoration: BoxDecoration(
+            borderRadius: borderRadius,
+            color: Colors.white.withValues(alpha: 0.12),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.14),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomControlSlot({required Widget child}) {
+    return SizedBox(
+      width: 88,
+      child: Align(alignment: Alignment.topCenter, child: child),
     );
   }
 
@@ -266,21 +297,19 @@ class _ScannerContentState extends State<_ScannerContent>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25),
-                width: 1.5,
+          SizedBox(
+            height: 76,
+            child: Center(
+              child: _buildGlassSurface(
+                width: 56,
+                height: 56,
+                borderRadius: BorderRadius.circular(16),
+                child: const Icon(
+                  Icons.photo_library_outlined,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
-            ),
-            child: const Icon(
-              Icons.photo_library_outlined,
-              color: Colors.white,
-              size: 24,
             ),
           ),
           const SizedBox(height: 6),

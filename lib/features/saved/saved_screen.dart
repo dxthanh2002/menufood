@@ -4,6 +4,8 @@ import '../../models/recipe.dart';
 import '../../theme/colors.dart';
 import '../../utils/responsive_util.dart';
 import 'widgets/saved_recipe_card.dart';
+import '../../navigation/routes.dart';
+import '../home/step3_result/step3_result_viewmodel.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key, this.showBackButton = false});
@@ -99,10 +101,45 @@ class _SavedScreenState extends State<SavedScreen> {
         children: [
           _buildSearchBar(),
           _buildCategories(),
-          Expanded(child: _buildRecipeList(isDesktop, isTablet)),
+          Expanded(child: _buildRecipeList(context, isDesktop, isTablet)),
         ],
       ),
     );
+  }
+
+  void _navigateToDetail(BuildContext context, Recipe recipe) {
+    // Try to find a rich recipe from the mock data in Step3ResultViewModel
+    // If not found, create a placeholder rich recipe based on the current recipe.
+    final mockRichRecipes = Step3ResultViewModel().recipes;
+    
+    final Step3ResultRecipe richRecipe = mockRichRecipes.firstWhere(
+      (r) => r.title == recipe.title,
+      orElse: () => Step3ResultRecipe(
+        title: recipe.title,
+        imageUrl: recipe.imageUrl,
+        description: 'A delicious ${recipe.title} prepared with fresh ingredients.',
+        duration: recipe.duration,
+        difficulty: recipe.difficulty,
+        highlight: 'Saved',
+        calories: '--- kcal',
+        servings: '2 servings',
+        ingredients: [
+          const RecipeIngredientItem(name: 'Main ingredients', note: 'fresh'),
+        ],
+        instructions: [
+          const RecipeInstructionStep(
+            title: 'Prepare',
+            description: 'Get all your ingredients ready for cooking.',
+          ),
+          const RecipeInstructionStep(
+            title: 'Cook',
+            description: 'Cook according to your preferred method.',
+          ),
+        ],
+      ),
+    );
+
+    Navigator.pushNamed(context, Routes.detailRecipe, arguments: richRecipe);
   }
 
   Widget _buildSearchBar() {
@@ -169,7 +206,7 @@ class _SavedScreenState extends State<SavedScreen> {
     );
   }
 
-  Widget _buildRecipeList(bool isDesktop, bool isTablet) {
+  Widget _buildRecipeList(BuildContext context, bool isDesktop, bool isTablet) {
     if (isDesktop || isTablet) {
       // Use GridView for larger screens
       return GridView.builder(
@@ -184,6 +221,7 @@ class _SavedScreenState extends State<SavedScreen> {
         itemBuilder: (context, index) {
           final data = savedRecipes[index];
           return _buildGridCard(
+            context,
             data['recipe'] as Recipe,
             data['typeTag'] as String,
           );
@@ -201,7 +239,7 @@ class _SavedScreenState extends State<SavedScreen> {
             child: SavedRecipeCard(
               recipe: data['recipe'] as Recipe,
               typeTag: data['typeTag'] as String,
-              onTap: () {},
+              onTap: () => _navigateToDetail(context, data['recipe'] as Recipe),
               onFavoriteTap: () {},
             ),
           );
@@ -210,8 +248,11 @@ class _SavedScreenState extends State<SavedScreen> {
     }
   }
 
-  Widget _buildGridCard(Recipe recipe, String tag) {
-    return Container(
+  Widget _buildGridCard(BuildContext context, Recipe recipe, String tag) {
+    return InkWell(
+      onTap: () => _navigateToDetail(context, recipe),
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
@@ -313,6 +354,7 @@ class _SavedScreenState extends State<SavedScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
