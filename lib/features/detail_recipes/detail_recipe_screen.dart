@@ -35,9 +35,7 @@ class _DetailRecipeContent extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          const Positioned.fill(
-            child: ColoredBox(color: AppColors.background),
-          ),
+          const Positioned.fill(child: ColoredBox(color: AppColors.background)),
           const Positioned(
             top: 0,
             left: 0,
@@ -48,7 +46,7 @@ class _DetailRecipeContent extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: DetailRecipeHeroHeader(recipe: recipe),
+            child: DetailRecipeHeroBackground(recipe: recipe),
           ),
           Positioned.fill(
             child: SingleChildScrollView(
@@ -134,6 +132,12 @@ class _DetailRecipeContent extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: const DetailRecipeHeroActions(),
           ),
         ],
       ),

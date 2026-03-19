@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../navigation/routes.dart';
+import '../../../navigation/widgets.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/responsive_util.dart';
 import 'confirm_ingredients_viewmodel.dart';
@@ -34,28 +35,6 @@ class _ConfirmIngredientsContent extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        leadingWidth: 56 + 16,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: _circleIconButton(
-            icon: Icons.arrow_back,
-            onTap: () => Navigator.pop(context),
-          ),
-        ),
-        title: Text(
-          'Confirm Ingredients',
-          style: GoogleFonts.inter(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-            fontSize: Responsive.scale(context, 18),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-      ),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -63,7 +42,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 16,
               right: 16,
-              top: 16,
+              top: 16 + 58 + MediaQuery.of(context).padding.top,
               bottom: Responsive.height(context, 0.2),
             ),
             child: Column(
@@ -96,33 +75,23 @@ class _ConfirmIngredientsContent extends StatelessWidget {
             ),
           ),
           _buildBottomBar(context),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AppHeaderActionsWrapper(
+              leading: AppNavActionButton(
+                icon: Icons.arrow_back_rounded,
+                onTap: () => Navigator.pop(context),
+              ),
+              title: 'Confirm Ingredients',
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _circleIconButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Center(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.textSecondary.withValues(alpha: 0.1),
-            ),
-          ),
-          child: Icon(icon, color: AppColors.textPrimary, size: 20),
-        ),
-      ),
-    );
-  }
 
   Widget _buildHeader(BuildContext context) {
     return Column(

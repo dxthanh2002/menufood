@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/colors.dart';
 import '../bottom_navigation/main_screen.dart';
+import '../../navigation/widgets.dart';
 import '../home/step3_result/step3_result_viewmodel.dart';
 
 class DetailRecipeHero extends StatelessWidget {
@@ -18,14 +19,14 @@ class DetailRecipeHero extends StatelessWidget {
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       leadingWidth: 64,
-      leading: _HeroActionButton(
+      leading: AppNavActionButton(
         icon: Icons.arrow_back_rounded,
         onTap: () => Navigator.pop(context),
       ),
       actions: const [
-        _HeroActionButton(icon: Icons.favorite_border_rounded),
+        AppNavActionButton(icon: Icons.favorite_border_rounded),
         SizedBox(width: 8),
-        _HeroActionButton(icon: Icons.share_rounded),
+        AppNavActionButton(icon: Icons.share_rounded),
         SizedBox(width: 16),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -52,8 +53,8 @@ class DetailRecipeHero extends StatelessWidget {
   }
 }
 
-class DetailRecipeHeroHeader extends StatelessWidget {
-  const DetailRecipeHeroHeader({super.key, required this.recipe});
+class DetailRecipeHeroBackground extends StatelessWidget {
+  const DetailRecipeHeroBackground({super.key, required this.recipe});
 
   final Step3ResultRecipe recipe;
 
@@ -77,24 +78,28 @@ class DetailRecipeHeroHeader extends StatelessWidget {
               ),
             ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _HeroActionButton(
-                    icon: Icons.arrow_back_rounded,
-                    onTap: () => Navigator.pop(context),
-                  ),
-                  const Spacer(),
-                  const _HeroActionButton(icon: Icons.favorite_border_rounded),
-                  const SizedBox(width: 8),
-                  const _HeroActionButton(icon: Icons.share_rounded),
-                ],
-              ),
-            ),
-          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DetailRecipeHeroActions extends StatelessWidget {
+  const DetailRecipeHeroActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppHeaderActionsWrapper(
+      leading: AppNavActionButton(
+        icon: Icons.arrow_back_rounded,
+        onTap: () => Navigator.pop(context),
+      ),
+      trailing: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppNavActionButton(icon: Icons.favorite_border_rounded),
+          SizedBox(width: 8),
+          AppNavActionButton(icon: Icons.share_rounded),
         ],
       ),
     );
@@ -418,38 +423,3 @@ class DetailRecipeBottomBar extends StatelessWidget {
   }
 }
 
-class _HeroActionButton extends StatelessWidget {
-  const _HeroActionButton({required this.icon, this.onTap});
-
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.94),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.textSecondary.withValues(alpha: 0.12),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: AppColors.accentBrown),
-        ),
-      ),
-    );
-  }
-}

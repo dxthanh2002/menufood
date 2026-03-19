@@ -10,9 +10,15 @@ class OnboardScreen extends StatelessWidget {
 
     // specific colors from HTML template
     const primaryColor = Color(0xFFFF8E42);
-    final backgroundColor = isDarkMode ? const Color(0xFF23170F) : const Color(0xFFF8F7F5);
-    final textColor = isDarkMode ? Colors.white : const Color(0xFF0F172A); // Slate 900
-    final subTextColor = isDarkMode ? const Color(0xFF94A3B8) : const Color(0xFF475569); // Slate 400/600
+    final backgroundColor = isDarkMode
+        ? const Color(0xFF23170F)
+        : const Color(0xFFF8F7F5);
+    final textColor = isDarkMode
+        ? Colors.white
+        : const Color(0xFF0F172A); // Slate 900
+    final subTextColor = isDarkMode
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF475569); // Slate 400/600
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -45,7 +51,9 @@ class OnboardScreen extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: primaryColor.withOpacity(0.1)),
+                            border: Border.all(
+                              color: primaryColor.withOpacity(0.1),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.05),
@@ -97,7 +105,8 @@ class OnboardScreen extends StatelessWidget {
                             context,
                             icon: Icons.photo_camera_outlined,
                             title: 'Take a photo of ingredients',
-                            description: 'Snap what\'s in your fridge or pantry',
+                            description:
+                                'Snap what\'s in your fridge or pantry',
                             showLine: true,
                             primaryColor: primaryColor,
                             textColor: textColor,
@@ -107,7 +116,8 @@ class OnboardScreen extends StatelessWidget {
                             context,
                             icon: Icons.auto_awesome_outlined,
                             title: 'AI detects the ingredients',
-                            description: 'Our smart AI identifies everything for you',
+                            description:
+                                'Our smart AI identifies everything for you',
                             showLine: true,
                             primaryColor: primaryColor,
                             textColor: textColor,
@@ -117,7 +127,8 @@ class OnboardScreen extends StatelessWidget {
                             context,
                             icon: Icons.restaurant_menu_outlined,
                             title: 'Get recommended recipes',
-                            description: 'Choose from delicious custom meal ideas',
+                            description:
+                                'Choose from delicious custom meal ideas',
                             showLine: false,
                             primaryColor: primaryColor,
                             textColor: textColor,
@@ -153,10 +164,7 @@ class OnboardScreen extends StatelessWidget {
                   ),
                   child: const Text(
                     'Start Cooking',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -217,10 +225,7 @@ class OnboardScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: TextStyle(
-                  color: subTextColor,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: subTextColor, fontSize: 14),
               ),
               const SizedBox(height: 24),
             ],

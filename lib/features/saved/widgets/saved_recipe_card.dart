@@ -23,10 +23,7 @@ class SavedRecipeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.softCream,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.softCream, width: 1),
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
@@ -54,7 +51,7 @@ class SavedRecipeCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            
+
             // Info Section
             Expanded(
               child: Column(
@@ -114,12 +111,12 @@ class SavedRecipeCard extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
-                        ),
-                      ),
+                            ),
+                          ),
                         )
                       else
                         const SizedBox.shrink(),
-                      
+
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),

@@ -6,11 +6,7 @@ class RecipeCard extends StatelessWidget {
   final Recipe recipe;
   final VoidCallback? onTap;
 
-  const RecipeCard({
-    super.key,
-    required this.recipe,
-    this.onTap,
-  });
+  const RecipeCard({super.key, required this.recipe, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +32,9 @@ class RecipeCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
                   child: Image.network(
                     recipe.imageUrl,
                     height: 180,
@@ -54,7 +52,11 @@ class RecipeCard extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.bookmark_outline, size: 20, color: Colors.black87),
+                      icon: const Icon(
+                        Icons.bookmark_outline,
+                        size: 20,
+                        color: Colors.black87,
+                      ),
                       onPressed: () {},
                     ),
                   ),
@@ -65,7 +67,10 @@ class RecipeCard extends StatelessWidget {
                     bottom: 12,
                     left: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(20),
@@ -83,7 +88,7 @@ class RecipeCard extends StatelessWidget {
                   ),
               ],
             ),
-            
+
             // Content
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -105,14 +110,20 @@ class RecipeCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         recipe.duration,
-                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Icon(Icons.bolt, size: 16, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Text(
                         recipe.difficulty,
-                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
                       ),
                       const Spacer(),
                       const Icon(Icons.star, size: 16, color: Colors.amber),

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../bottom_navigation/main_screen.dart';
+import '../../../navigation/widgets.dart';
 import '../../../theme/colors.dart';
 import 'step3_result_viewmodel.dart';
 import 'step3_result_widgets.dart';
@@ -28,76 +29,69 @@ class _Step3ResultContent extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: Colors.white.withValues(alpha: 0.92),
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            leading: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.menu_rounded,
-                    color: AppColors.primary,
-                  ),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).padding.top + 58,
                 ),
               ),
-            ),
-            centerTitle: true,
-            title: Text(
-              'MenuAI',
-              style: GoogleFonts.inter(
-                color: AppColors.accentBrown,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 28, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Dishes you can cook',
-                    style: GoogleFonts.inter(
-                      color: AppColors.accentBrown,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                      height: 1.1,
-                    ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 28, 16, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Dishes you can cook',
+                        style: GoogleFonts.inter(
+                          color: AppColors.accentBrown,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Based on ingredients in your pantry',
+                        style: GoogleFonts.inter(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Based on ingredients in your pantry',
-                    style: GoogleFonts.inter(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                sliver: SliverList.separated(
+                  itemCount: viewModel.recipes.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 24),
+                  itemBuilder: (context, index) {
+                    final recipe = viewModel.recipes[index];
+                    return ResultRecipeCard(recipe: recipe);
+                  },
+                ),
+              ),
+            ],
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            sliver: SliverList.separated(
-              itemCount: viewModel.recipes.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 24),
-              itemBuilder: (context, index) {
-                final recipe = viewModel.recipes[index];
-                return ResultRecipeCard(recipe: recipe);
-              },
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: AppColors.background.withValues(alpha: 0.92),
+              child: AppHeaderActionsWrapper(
+                leading: AppNavActionButton(
+                  icon: Icons.arrow_back_rounded,
+                  onTap: () => Navigator.pop(context),
+                ),
+                title: 'MenuAI',
+              ),
             ),
           ),
         ],

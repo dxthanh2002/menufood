@@ -111,13 +111,14 @@ class _SavedScreenState extends State<SavedScreen> {
     // Try to find a rich recipe from the mock data in Step3ResultViewModel
     // If not found, create a placeholder rich recipe based on the current recipe.
     final mockRichRecipes = Step3ResultViewModel().recipes;
-    
+
     final Step3ResultRecipe richRecipe = mockRichRecipes.firstWhere(
       (r) => r.title == recipe.title,
       orElse: () => Step3ResultRecipe(
         title: recipe.title,
         imageUrl: recipe.imageUrl,
-        description: 'A delicious ${recipe.title} prepared with fresh ingredients.',
+        description:
+            'A delicious ${recipe.title} prepared with fresh ingredients.',
         duration: recipe.duration,
         difficulty: recipe.difficulty,
         highlight: 'Saved',
@@ -161,18 +162,9 @@ class _SavedScreenState extends State<SavedScreen> {
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Search saved recipes',
-            hintStyle: TextStyle(
-              color: Color(0xFF94A3B8),
-              fontSize: 14,
-            ),
-            prefixIcon: Icon(
-              Icons.search,
-              color: Color(0xFF94A3B8),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 16,
-            ),
+            hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+            prefixIcon: Icon(Icons.search, color: Color(0xFF94A3B8)),
+            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           ),
         ),
       ),
@@ -267,108 +259,108 @@ class _SavedScreenState extends State<SavedScreen> {
       onTap: () => _navigateToDetail(context, recipe),
       borderRadius: BorderRadius.circular(24),
       child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.softCream, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(recipe.imageUrl, fit: BoxFit.cover),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white70,
-                      radius: 18,
-                      child: IconButton(
-                        iconSize: 18,
-                        icon: const Icon(
-                          Icons.favorite,
-                          color: AppColors.primary,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.softCream, width: 1),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadow,
+              blurRadius: 10,
+              offset: Offset(0, 4),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  recipe.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accentBrown,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
                 ),
-                const SizedBox(height: 4),
-                Row(
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        tag,
-                        style: const TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                    Image.network(recipe.imageUrl, fit: BoxFit.cover),
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white70,
+                        radius: 18,
+                        child: IconButton(
+                          iconSize: 18,
+                          icon: const Icon(
+                            Icons.favorite,
+                            color: AppColors.primary,
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                    ),
-                    const Spacer(),
-                    const Icon(
-                      Icons.schedule,
-                      size: 12,
-                      color: Color(0xFF8E847C),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      recipe.duration,
-                      style: const TextStyle(
-                        color: Color(0xFF8E847C),
-                        fontSize: 10,
                       ),
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    recipe.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accentBrown,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          tag,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(
+                        Icons.schedule,
+                        size: 12,
+                        color: Color(0xFF8E847C),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        recipe.duration,
+                        style: const TextStyle(
+                          color: Color(0xFF8E847C),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

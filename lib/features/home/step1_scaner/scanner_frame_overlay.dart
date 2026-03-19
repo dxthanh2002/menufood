@@ -63,9 +63,12 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
 
   _HandleType _hitTest(Offset pos) {
     if ((pos - _rect.topLeft).distance < _hitRadius) return _HandleType.topLeft;
-    if ((pos - _rect.topRight).distance < _hitRadius) return _HandleType.topRight;
-    if ((pos - _rect.bottomLeft).distance < _hitRadius) return _HandleType.bottomLeft;
-    if ((pos - _rect.bottomRight).distance < _hitRadius) return _HandleType.bottomRight;
+    if ((pos - _rect.topRight).distance < _hitRadius)
+      return _HandleType.topRight;
+    if ((pos - _rect.bottomLeft).distance < _hitRadius)
+      return _HandleType.bottomLeft;
+    if ((pos - _rect.bottomRight).distance < _hitRadius)
+      return _HandleType.bottomRight;
     if (_rect.contains(pos)) return _HandleType.move;
     return _HandleType.none;
   }
@@ -107,7 +110,8 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
       if (r.left < 0) r = r.shift(Offset(-r.left, 0));
       if (r.top < 0) r = r.shift(Offset(0, -r.top));
       if (r.right > size.width) r = r.shift(Offset(size.width - r.right, 0));
-      if (r.bottom > size.height) r = r.shift(Offset(0, size.height - r.bottom));
+      if (r.bottom > size.height)
+        r = r.shift(Offset(0, size.height - r.bottom));
     } else {
       r = Rect.fromLTRB(
         r.left.clamp(0.0, size.width),
@@ -152,7 +156,9 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
                     opacity: _hintAnim,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(20),
@@ -186,7 +192,8 @@ class _FramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Dark overlay outside frame
-    final bgPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final bgPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final framePath = Path()
       ..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(_radius)));
     canvas.drawPath(
@@ -216,22 +223,39 @@ class _FramePainter extends CustomPainter {
     // Top-left
     canvas.drawArc(
       Rect.fromLTWH(rect.left, rect.top, arcSize, arcSize),
-      3.14159, sweepAngle, false, cp,
+      3.14159,
+      sweepAngle,
+      false,
+      cp,
     );
     // Top-right
     canvas.drawArc(
       Rect.fromLTWH(rect.right - arcSize, rect.top, arcSize, arcSize),
-      -1.5708, sweepAngle, false, cp,
+      -1.5708,
+      sweepAngle,
+      false,
+      cp,
     );
     // Bottom-left
     canvas.drawArc(
       Rect.fromLTWH(rect.left, rect.bottom - arcSize, arcSize, arcSize),
-      1.5708, sweepAngle, false, cp,
+      1.5708,
+      sweepAngle,
+      false,
+      cp,
     );
     // Bottom-right
     canvas.drawArc(
-      Rect.fromLTWH(rect.right - arcSize, rect.bottom - arcSize, arcSize, arcSize),
-      0, sweepAngle, false, cp,
+      Rect.fromLTWH(
+        rect.right - arcSize,
+        rect.bottom - arcSize,
+        arcSize,
+        arcSize,
+      ),
+      0,
+      sweepAngle,
+      false,
+      cp,
     );
   }
 

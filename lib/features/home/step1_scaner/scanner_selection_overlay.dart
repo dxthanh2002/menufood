@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-enum _HandleType { topLeft, topRight, bottomLeft, bottomRight, left, right, move, none }
+enum _HandleType {
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+  left,
+  right,
+  move,
+  none,
+}
 
 class ScannerSelectionOverlay extends StatefulWidget {
   final ValueNotifier<Rect> selectionNotifier;
@@ -8,7 +17,8 @@ class ScannerSelectionOverlay extends StatefulWidget {
   const ScannerSelectionOverlay({super.key, required this.selectionNotifier});
 
   @override
-  State<ScannerSelectionOverlay> createState() => _ScannerSelectionOverlayState();
+  State<ScannerSelectionOverlay> createState() =>
+      _ScannerSelectionOverlayState();
 }
 
 class _ScannerSelectionOverlayState extends State<ScannerSelectionOverlay> {
@@ -23,10 +33,14 @@ class _ScannerSelectionOverlayState extends State<ScannerSelectionOverlay> {
     final r = _rect;
     if ((pos - r.topLeft).distance < _hitRadius) return _HandleType.topLeft;
     if ((pos - r.topRight).distance < _hitRadius) return _HandleType.topRight;
-    if ((pos - r.bottomLeft).distance < _hitRadius) return _HandleType.bottomLeft;
-    if ((pos - r.bottomRight).distance < _hitRadius) return _HandleType.bottomRight;
-    if ((pos - Offset(r.left, r.center.dy)).distance < _hitRadius) return _HandleType.left;
-    if ((pos - Offset(r.right, r.center.dy)).distance < _hitRadius) return _HandleType.right;
+    if ((pos - r.bottomLeft).distance < _hitRadius)
+      return _HandleType.bottomLeft;
+    if ((pos - r.bottomRight).distance < _hitRadius)
+      return _HandleType.bottomRight;
+    if ((pos - Offset(r.left, r.center.dy)).distance < _hitRadius)
+      return _HandleType.left;
+    if ((pos - Offset(r.right, r.center.dy)).distance < _hitRadius)
+      return _HandleType.right;
     if (r.contains(pos)) return _HandleType.move;
     return _HandleType.none;
   }
@@ -69,7 +83,8 @@ class _ScannerSelectionOverlayState extends State<ScannerSelectionOverlay> {
       if (r.left < 0) r = r.shift(Offset(-r.left, 0));
       if (r.top < 0) r = r.shift(Offset(0, -r.top));
       if (r.right > size.width) r = r.shift(Offset(size.width - r.right, 0));
-      if (r.bottom > size.height) r = r.shift(Offset(0, size.height - r.bottom));
+      if (r.bottom > size.height)
+        r = r.shift(Offset(0, size.height - r.bottom));
     } else {
       r = Rect.fromLTRB(
         r.left.clamp(0.0, size.width),
@@ -114,7 +129,8 @@ class _SelectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Dark overlay outside selection
-    final bgPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final bgPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final selPath = Path()
       ..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(12)));
     canvas.drawPath(
@@ -140,17 +156,49 @@ class _SelectionPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // Top-left
-    canvas.drawLine(Offset(rect.left + 2, rect.top), Offset(rect.left + len, rect.top), cp);
-    canvas.drawLine(Offset(rect.left, rect.top + 2), Offset(rect.left, rect.top + len), cp);
+    canvas.drawLine(
+      Offset(rect.left + 2, rect.top),
+      Offset(rect.left + len, rect.top),
+      cp,
+    );
+    canvas.drawLine(
+      Offset(rect.left, rect.top + 2),
+      Offset(rect.left, rect.top + len),
+      cp,
+    );
     // Top-right
-    canvas.drawLine(Offset(rect.right - 2, rect.top), Offset(rect.right - len, rect.top), cp);
-    canvas.drawLine(Offset(rect.right, rect.top + 2), Offset(rect.right, rect.top + len), cp);
+    canvas.drawLine(
+      Offset(rect.right - 2, rect.top),
+      Offset(rect.right - len, rect.top),
+      cp,
+    );
+    canvas.drawLine(
+      Offset(rect.right, rect.top + 2),
+      Offset(rect.right, rect.top + len),
+      cp,
+    );
     // Bottom-left
-    canvas.drawLine(Offset(rect.left + 2, rect.bottom), Offset(rect.left + len, rect.bottom), cp);
-    canvas.drawLine(Offset(rect.left, rect.bottom - 2), Offset(rect.left, rect.bottom - len), cp);
+    canvas.drawLine(
+      Offset(rect.left + 2, rect.bottom),
+      Offset(rect.left + len, rect.bottom),
+      cp,
+    );
+    canvas.drawLine(
+      Offset(rect.left, rect.bottom - 2),
+      Offset(rect.left, rect.bottom - len),
+      cp,
+    );
     // Bottom-right
-    canvas.drawLine(Offset(rect.right - 2, rect.bottom), Offset(rect.right - len, rect.bottom), cp);
-    canvas.drawLine(Offset(rect.right, rect.bottom - 2), Offset(rect.right, rect.bottom - len), cp);
+    canvas.drawLine(
+      Offset(rect.right - 2, rect.bottom),
+      Offset(rect.right - len, rect.bottom),
+      cp,
+    );
+    canvas.drawLine(
+      Offset(rect.right, rect.bottom - 2),
+      Offset(rect.right, rect.bottom - len),
+      cp,
+    );
 
     // Side handles (pill-shaped)
     final hp = Paint()..color = Colors.white.withValues(alpha: 0.85);
@@ -161,7 +209,11 @@ class _SelectionPainter extends CustomPainter {
     // Left handle
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(rect.left, rect.center.dy), width: hw, height: hh),
+        Rect.fromCenter(
+          center: Offset(rect.left, rect.center.dy),
+          width: hw,
+          height: hh,
+        ),
         hr,
       ),
       hp,
@@ -169,7 +221,11 @@ class _SelectionPainter extends CustomPainter {
     // Right handle
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(rect.right, rect.center.dy), width: hw, height: hh),
+        Rect.fromCenter(
+          center: Offset(rect.right, rect.center.dy),
+          width: hw,
+          height: hh,
+        ),
         hr,
       ),
       hp,

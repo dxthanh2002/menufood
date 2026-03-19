@@ -14,9 +14,7 @@ class RecipesScreen extends StatelessWidget {
       create: (_) => RecipesViewModel(),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: RootTabAppBar(
-          title: 'Recipes',
-        ),
+        appBar: RootTabAppBar(title: 'Recipes'),
         body: const RecipesContent(),
       ),
     );

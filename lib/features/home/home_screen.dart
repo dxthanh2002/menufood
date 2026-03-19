@@ -18,9 +18,7 @@ class HomeScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             backgroundColor: AppColors.background,
-          appBar: const RootTabAppBar(
-            title: 'MenuAI',
-          ),
+            appBar: const RootTabAppBar(title: 'MenuAI'),
             body: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
