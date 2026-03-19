@@ -260,16 +260,19 @@ class _ScannerContentState extends State<_ScannerContent>
         24,
         0,
         24,
-        MediaQuery.of(context).padding.bottom + 24,
+        MediaQuery.of(context).padding.bottom + 30,
       ),
       child: _buildGlassSurface(
         borderRadius: BorderRadius.circular(44),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         width: double.infinity,
         child: Row(
           children: [
             Expanded(
-              child: _buildUploadButton(),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 40), // Move it a bit to the left
+                child: _buildUploadButton(),
+              ),
             ),
             _buildCaptureButton(vm),
             const Expanded(
@@ -290,26 +293,29 @@ class _ScannerContentState extends State<_ScannerContent>
   }) {
     return ClipRRect(
       borderRadius: borderRadius,
-      child: Container(
-        width: width,
-        height: height,
-        padding: padding,
-        decoration: BoxDecoration(
-          borderRadius: borderRadius,
-          color: Colors.white.withValues(alpha: 0.15),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.25),
-            width: 0.8,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding,
+          decoration: BoxDecoration(
+            borderRadius: borderRadius,
+            color: Colors.white.withValues(alpha: 0.12),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.15),
+              width: 0.5,
             ),
-          ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }
@@ -334,12 +340,12 @@ class _ScannerContentState extends State<_ScannerContent>
               size: 20,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Text(
             'UPLOAD',
             style: GoogleFonts.inter(
               color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
             ),
