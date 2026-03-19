@@ -18,30 +18,9 @@ class HomeScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             backgroundColor: AppColors.background,
-            appBar: RootTabAppBar(
-              title: 'MenuAI',
-              leading: RootTabAppBar.buildActionButton(
-                icon: const Icon(
-                  Icons.menu_rounded,
-                  color: AppColors.accentBrown,
-                ),
-                onPressed: () {},
-              ),
-              trailing: RootTabAppBar.buildActionButton(
-                icon: const Icon(
-                  Icons.account_circle_rounded,
-                  color: AppColors.primary,
-                ),
-                backgroundColor: AppColors.primary.withOpacity(0.12),
-                onPressed: () {
-                  try {
-                    context.read<NavigationViewModel>().setIndex(4);
-                  } on ProviderNotFoundException {
-                    Navigator.pushNamed(context, Routes.settings);
-                  }
-                },
-              ),
-            ),
+          appBar: const RootTabAppBar(
+            title: 'MenuAI',
+          ),
             body: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(

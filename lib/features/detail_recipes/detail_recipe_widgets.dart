@@ -244,31 +244,46 @@ class DetailRecipeIngredientTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Checkbox(
-                value: isChecked,
-                onChanged: (_) => onChanged(),
-                activeColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  ingredient.name,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+              Transform.translate(
+                offset: const Offset(-15, 0),
+                child: Checkbox(
+                  value: isChecked,
+                  onChanged: (_) => onChanged(),
+                  activeColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Text(
-                ingredient.note,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        ingredient.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      ingredient.note,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

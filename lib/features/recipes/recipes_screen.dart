@@ -106,40 +106,27 @@ class RecipesContent extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 44,
+          height: 60,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             itemCount: viewModel.categories.length,
             itemBuilder: (context, index) {
               final isSelected = viewModel.selectedCategoryIndex == index;
               return Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: GestureDetector(
                   onTap: () => viewModel.setSelectedCategory(index),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 10,
+                      vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : AppColors.surface,
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary
-                            : const Color(0xFFF1F5F9), // slate-100
-                        width: 1,
-                      ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : [],
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.softCream,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
@@ -147,7 +134,7 @@ class RecipesContent extends StatelessWidget {
                         style: TextStyle(
                           color: isSelected
                               ? Colors.white
-                              : const Color(0xFF475569), // slate-600
+                              : AppColors.accentBrown,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),

@@ -144,21 +144,35 @@ class _SavedScreenState extends State<SavedScreen> {
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: AppColors.softCream.withOpacity(0.5),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: const TextField(
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Search saved recipes',
             hintStyle: TextStyle(
-              color: Color(0xFF8E847C),
-            ), // Keeping descriptive color
-            icon: Icon(Icons.search, color: AppColors.primary),
+              color: Color(0xFF94A3B8),
+              fontSize: 14,
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Color(0xFF94A3B8),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 16,
+            ),
           ),
         ),
       ),
@@ -170,7 +184,7 @@ class _SavedScreenState extends State<SavedScreen> {
       height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
@@ -181,8 +195,8 @@ class _SavedScreenState extends State<SavedScreen> {
               onTap: () => setState(() => selectedCategory = category),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                  horizontal: 20,
+                  vertical: 5,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : AppColors.softCream,
