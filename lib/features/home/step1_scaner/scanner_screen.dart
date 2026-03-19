@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
 import '../../../navigation/routes.dart';
 import '../../../theme/colors.dart';
@@ -96,17 +97,45 @@ class _ScannerContentState extends State<_ScannerContent>
   Widget build(BuildContext context) {
     final vm = context.watch<ScannerViewModel>();
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Camera preview — fullscreen
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+          // Camera preview â€” fullscreen with BoxFit.cover logic
           if (vm.isInitialized && vm.controller != null)
-            Positioned.fill(child: CameraPreview(vm.controller!))
+            Positioned.fill(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return ClipRect(
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        height:
+                            constraints.maxWidth *
+                            vm.controller!.value.aspectRatio,
+                        child: CameraPreview(vm.controller!),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
           else
             const Positioned.fill(
-              child: Center(
-                child: CircularProgressIndicator(color: Colors.white),
+              child: ColoredBox(
+                color: Colors.black,
+                child: Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
               ),
             ),
 
@@ -126,7 +155,7 @@ class _ScannerContentState extends State<_ScannerContent>
             bottom: 0,
             left: 0,
             right: 0,
-            child: SafeArea(top: false, child: _buildBottomControls(vm)),
+            child: _buildBottomControls(vm),
           ),
 
           // Processing overlay
@@ -154,6 +183,7 @@ class _ScannerContentState extends State<_ScannerContent>
               ),
             ),
         ],
+        ),
       ),
     );
   }
@@ -225,28 +255,28 @@ class _ScannerContentState extends State<_ScannerContent>
   };
 
   Widget _buildBottomControls(ScannerViewModel vm) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(32, 20, 32, 36),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
-        ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        0,
+        24,
+        MediaQuery.of(context).padding.bottom + 24,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildBottomControlSlot(child: _buildUploadButton()),
-              _buildBottomControlSlot(child: _buildCaptureButton(vm)),
-              const SizedBox(width: 88),
-            ],
-          ),
-        ],
+      child: _buildGlassSurface(
+        borderRadius: BorderRadius.circular(44),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        width: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+              child: _buildUploadButton(),
+            ),
+            _buildCaptureButton(vm),
+            const Expanded(
+              child: SizedBox(), // Balance for the upload button on the left
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -260,36 +290,30 @@ class _ScannerContentState extends State<_ScannerContent>
   }) {
     return ClipRRect(
       borderRadius: borderRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          width: width,
-          height: height,
-          padding: padding,
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            color: Colors.white.withValues(alpha: 0.12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.14),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
+      child: Container(
+        width: width,
+        height: height,
+        padding: padding,
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          color: Colors.white.withValues(alpha: 0.15),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 0.8,
           ),
-          child: child,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
+        child: child,
       ),
     );
   }
 
-  Widget _buildBottomControlSlot({required Widget child}) {
-    return SizedBox(
-      width: 88,
-      child: Align(alignment: Alignment.topCenter, child: child),
-    );
-  }
 
   Widget _buildUploadButton() {
     return GestureDetector(
@@ -297,29 +321,27 @@ class _ScannerContentState extends State<_ScannerContent>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: 76,
-            child: Center(
-              child: _buildGlassSurface(
-                width: 56,
-                height: 56,
-                borderRadius: BorderRadius.circular(16),
-                child: const Icon(
-                  Icons.photo_library_outlined,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
+          // This spacer centers the icon circle relative to the capture button
+          // by offsetting the text height and spacing below.
+          const SizedBox(height: 20),
+          _buildGlassSurface(
+            width: 48,
+            height: 48,
+            borderRadius: BorderRadius.circular(24),
+            child: const Icon(
+              Icons.photo_library_outlined,
+              color: Colors.white,
+              size: 20,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Text(
             'UPLOAD',
             style: GoogleFonts.inter(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0,
             ),
           ),
         ],
@@ -331,13 +353,20 @@ class _ScannerContentState extends State<_ScannerContent>
     return GestureDetector(
       onTap: vm.isProcessing ? null : _onCapturePressed,
       child: Container(
-        width: 76,
-        height: 76,
+        width: 80,
+        height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+          ],
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-            width: 4,
+            color: Colors.white.withValues(alpha: 0.4),
+            width: 3,
           ),
         ),
         padding: const EdgeInsets.all(4),
@@ -349,10 +378,11 @@ class _ScannerContentState extends State<_ScannerContent>
           child: const Icon(
             Icons.camera_alt_rounded,
             color: Colors.white,
-            size: 30,
+            size: 32,
           ),
         ),
       ),
     );
   }
 }
+
