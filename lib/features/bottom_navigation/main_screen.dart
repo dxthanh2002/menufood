@@ -28,11 +28,11 @@ class MainContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<NavigationViewModel>();
 
-    final List<Widget> screens = [
-      const HomeScreen(),
-      const RecipesScreen(),
-      const SavedScreen(),
-      const UserSettingScreen(),
+    const List<Widget> screens = [
+      HomeScreen(),
+      RecipesScreen(),
+      SavedScreen(),
+      UserSettingScreen(),
     ];
 
     return Scaffold(
@@ -55,39 +55,55 @@ class AppBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
 
+  static const List<NavigationDestination> _destinations = [
+    NavigationDestination(
+      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Icons.home_rounded),
+      label: 'Home',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.restaurant_menu_outlined),
+      selectedIcon: Icon(Icons.restaurant_menu_rounded),
+      label: 'Recipes',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.bookmark_border_rounded),
+      selectedIcon: Icon(Icons.bookmark_rounded),
+      label: 'Saved',
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.settings_outlined),
+      selectedIcon: Icon(Icons.settings_rounded),
+      label: 'Settings',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final navigationBackgroundColor = AppColors.surface.withValues(alpha: 0.96);
+
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        boxShadow: [
+      decoration: BoxDecoration(
+        color: navigationBackgroundColor,
+        border: const Border(top: BorderSide(color: AppColors.navDivider)),
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 10,
-            offset: Offset(0, -4),
+            blurRadius: 18,
+            offset: Offset(0, -6),
           ),
         ],
       ),
-      child: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: onDestinationSelected,
-        backgroundColor: AppColors.surface,
-        indicatorColor: Colors.transparent,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
-          NavigationDestination(
-            icon: Icon(Icons.soup_kitchen_rounded),
-            label: 'Recipes',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_rounded),
-            label: 'Saved',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_rounded),
-            label: 'Settings',
-          ),
-        ],
+      child: SafeArea(
+        top: false,
+        child: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: onDestinationSelected,
+          backgroundColor: Colors.transparent,
+          indicatorColor: navigationBackgroundColor,
+          animationDuration: const Duration(milliseconds: 250),
+          destinations: _destinations,
+        ),
       ),
     );
   }

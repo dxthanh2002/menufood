@@ -84,7 +84,7 @@ class _SavedScreenState extends State<SavedScreen> {
     bool isTablet = Responsive.isTablet(context);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.background,
       appBar: RootTabAppBar(
         title: 'Saved Recipes',
         leading: widget.showBackButton

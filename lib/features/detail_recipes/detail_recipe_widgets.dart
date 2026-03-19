@@ -245,7 +245,7 @@ class DetailRecipeIngredientTile extends StatelessWidget {
           child: Row(
             children: [
               Transform.translate(
-                offset: const Offset(-15, 0),
+                offset: const Offset(-10, 0),
                 child: Checkbox(
                   value: isChecked,
                   onChanged: (_) => onChanged(),

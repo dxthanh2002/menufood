@@ -16,13 +16,6 @@ class RecipesScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         appBar: RootTabAppBar(
           title: 'Recipes',
-          trailing: RootTabAppBar.buildActionButton(
-            icon: const Icon(
-              Icons.notifications_none_rounded,
-              color: AppColors.accentBrown,
-            ),
-            onPressed: () {},
-          ),
         ),
         body: const RecipesContent(),
       ),
@@ -76,7 +69,6 @@ class RecipesContent extends StatelessWidget {
         ),
 
         // Categories Section
-        const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -104,7 +96,6 @@ class RecipesContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 12),
         SizedBox(
           height: 60,
           child: ListView.builder(
@@ -148,7 +139,7 @@ class RecipesContent extends StatelessWidget {
         ),
 
         // Trending Recipes Section
-        const SizedBox(height: 24),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
