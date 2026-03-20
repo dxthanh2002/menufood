@@ -34,7 +34,9 @@ class _Step3ResultContent extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: MediaQuery.of(context).padding.top + 58,
+                  height: MediaQuery.of(context).padding.top +
+                      AppNavActionButton.size +
+                      AppNavActionButton.verticalPadding * 2,
                 ),
               ),
               SliverToBoxAdapter(

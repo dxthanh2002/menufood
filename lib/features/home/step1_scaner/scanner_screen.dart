@@ -109,20 +109,20 @@ class _ScannerContentState extends State<_ScannerContent>
           if (vm.isInitialized && vm.controller != null)
             Positioned.fill(
               child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return ClipRect(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        height:
-                            constraints.maxWidth *
-                            vm.controller!.value.aspectRatio,
-                        child: CameraPreview(vm.controller!),
-                      ),
+              builder: (context, constraints) {
+                return ClipRect(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      height:
+                          constraints.maxWidth /
+                          vm.controller!.value.aspectRatio,
+                      child: CameraPreview(vm.controller!),
                     ),
-                  );
-                },
+                  ),
+                );
+              },
               ),
             )
           else
@@ -251,30 +251,30 @@ class _ScannerContentState extends State<_ScannerContent>
   };
 
   Widget _buildBottomControls(ScannerViewModel vm) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        0,
-        24,
-        MediaQuery.of(context).padding.bottom + 30,
-      ),
-      child: _buildGlassSurface(
-        borderRadius: BorderRadius.circular(44),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        width: double.infinity,
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 40), // Move it a bit to the left
-                child: _buildUploadButton(),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+        child: _buildGlassSurface(
+          borderRadius: BorderRadius.circular(44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          width: double.infinity,
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    right: 40,
+                  ), // Keep capture button visually centered
+                  child: _buildUploadButton(),
+                ),
               ),
-            ),
-            _buildCaptureButton(vm),
-            const Expanded(
-              child: SizedBox(), // Balance for the upload button on the left
-            ),
-          ],
+              _buildCaptureButton(vm),
+              const Expanded(
+                child: SizedBox(), // Balance for the upload button on the left
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -387,4 +387,3 @@ class _ScannerContentState extends State<_ScannerContent>
     );
   }
 }
-

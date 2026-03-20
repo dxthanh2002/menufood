@@ -28,6 +28,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ConfirmIngredientsViewModel>();
+    final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -38,8 +39,11 @@ class _ConfirmIngredientsContent extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 20,
               right: 20,
-              top: 16 + 58 + MediaQuery.of(context).padding.top,
-              bottom: Responsive.height(context, 0.2),
+              top: 16 +
+                  AppNavActionButton.size +
+                  AppNavActionButton.verticalPadding * 2 +
+                  mediaQuery.padding.top,
+              bottom: mediaQuery.padding.bottom + 128,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,19 +70,19 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           ),
           _buildBottomBar(context),
           Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              border: Border(
-                bottom: BorderSide(
-                  color: AppColors.textSecondary.withValues(alpha: 0.08),
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.textSecondary.withValues(alpha: 0.08),
+                  ),
                 ),
               ),
-            ),
-            child: AppHeaderActionsWrapper(
+              child: AppHeaderActionsWrapper(
                 leading: AppNavActionButton(
                   icon: Icons.arrow_back_rounded,
                   onTap: () => Navigator.pop(context),
@@ -410,61 +414,57 @@ class _ConfirmIngredientsContent extends StatelessWidget {
   }
 
   Widget _buildBottomBar(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.background.withValues(alpha: 0.98),
-          border: Border(
-            top: BorderSide(
-              color: AppColors.textSecondary.withValues(alpha: 0.05),
-            ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.fromLTRB(
-          20,
-          16,
-          20,
-          MediaQuery.of(context).padding.bottom > 0
-              ? MediaQuery.of(context).padding.bottom + 4
-              : 20,
-        ),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, Routes.step3Result);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 64),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            elevation: 4,
-            shadowColor: AppColors.primary.withValues(alpha: 0.4),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Find Recipes',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
+    return SafeArea(
+      top: false,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppColors.background.withValues(alpha: 0.98),
+            border: Border(
+              top: BorderSide(
+                color: AppColors.textSecondary.withValues(alpha: 0.05),
               ),
-              const SizedBox(width: 10),
-              const Icon(Icons.search_rounded, size: 24),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
             ],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.step3Result);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 64),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
+              elevation: 4,
+              shadowColor: AppColors.primary.withValues(alpha: 0.4),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Find Recipes',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Icon(Icons.search_rounded, size: 24),
+              ],
+            ),
           ),
         ),
       ),

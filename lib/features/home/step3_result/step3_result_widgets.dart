@@ -36,9 +36,8 @@ class ResultRecipeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 208,
-              width: double.infinity,
+            AspectRatio(
+              aspectRatio: 16 / 10,
               child: Image.network(recipe.imageUrl, fit: BoxFit.cover),
             ),
             Padding(
