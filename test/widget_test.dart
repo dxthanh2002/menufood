@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ai_menu_flutter/features/home/step2_confirm/confirm_ingredients_screen.dart';
 
 void main() {
-  testWidgets('confirm ingredients screen renders uploaded image section', (
+  testWidgets('confirm ingredients screen renders ingredient controls', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -13,7 +13,7 @@ void main() {
     );
 
     expect(find.text('Confirm Ingredients'), findsOneWidget);
-    expect(find.text('SELECTED PHOTO'), findsOneWidget);
+    expect(find.text('SELECTED PHOTO'), findsNothing);
     expect(find.text('DETECTED INGREDIENTS'), findsOneWidget);
   });
 }

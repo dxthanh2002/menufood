@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../bottom_navigation/main_screen.dart';
 import '../../../navigation/widgets.dart';
 import '../../../theme/colors.dart';
 import 'step3_result_viewmodel.dart';
@@ -84,26 +83,26 @@ class _Step3ResultContent extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              color: AppColors.background.withValues(alpha: 0.92),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.textSecondary.withValues(alpha: 0.08),
+                  ),
+                ),
+              ),
               child: AppHeaderActionsWrapper(
                 leading: AppNavActionButton(
                   icon: Icons.arrow_back_rounded,
                   onTap: () => Navigator.pop(context),
+                  showShadow: false,
+                  showBorder: false,
                 ),
                 title: 'MenuAI',
               ),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: AppBottomNavigationBar(
-        currentIndex: 1,
-        onDestinationSelected: (index) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => MainScreen(initialIndex: index)),
-            (_) => false,
-          );
-        },
       ),
     );
   }

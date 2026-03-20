@@ -68,7 +68,7 @@ class _ScannerContentState extends State<_ScannerContent>
       return;
     }
 
-    Navigator.pushNamed(context, Routes.confirmIngredients);
+    Navigator.pushNamed(context, Routes.confirmIngredients, arguments: vm.imagePath);
   }
 
   Future<void> _onUploadPressed() async {
@@ -84,13 +84,9 @@ class _ScannerContentState extends State<_ScannerContent>
       return;
     }
 
-    if (!isImageSelected) {
-      return;
+    if (isImageSelected) {
+      Navigator.pushNamed(context, Routes.confirmIngredients, arguments: vm.imagePath);
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Image selected from library.')),
-    );
   }
 
   @override

@@ -74,18 +74,4 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  IconData getIngredientIcon(String name) {
-    switch (name.toLowerCase()) {
-      case 'tomato':
-        return Icons.restaurant_rounded;
-      case 'egg':
-        return Icons.egg_rounded;
-      case 'onion':
-        return Icons.eco_rounded;
-      case 'beef':
-        return Icons.restaurant_menu_rounded;
-      default:
-        return Icons.restaurant_rounded;
-    }
-  }
 }

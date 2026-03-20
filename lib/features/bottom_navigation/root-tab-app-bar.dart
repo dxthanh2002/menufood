@@ -21,7 +21,7 @@ class RootTabAppBar extends StatelessWidget implements PreferredSizeWidget {
   );
 
   @override
-  Size get preferredSize => const Size.fromHeight(_toolbarHeight);
+  Size get preferredSize => const Size.fromHeight(_toolbarHeight + 1);
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +60,13 @@ class RootTabAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1),
+        child: Container(
+          color: AppColors.navDivider,
+          height: 1,
+        ),
+      ),
     );
   }
 

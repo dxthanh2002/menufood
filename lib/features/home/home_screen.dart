@@ -162,7 +162,7 @@ class HomeScreen extends StatelessWidget {
 
                                   // Upload Button
                                   OutlinedButton.icon(
-                                    onPressed: () {},
+                                    onPressed: () => viewModel.pickImageToConfirm(context),
                                     icon: Icon(
                                       Icons.upload_file_rounded,
                                       size: Responsive.scale(context, 20),

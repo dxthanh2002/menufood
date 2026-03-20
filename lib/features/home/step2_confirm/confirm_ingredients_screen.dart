@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,15 +17,13 @@ class ConfirmIngredientsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ConfirmIngredientsViewModel(),
-      child: _ConfirmIngredientsContent(imagePath: imagePath),
+      child: const _ConfirmIngredientsContent(),
     );
   }
 }
 
 class _ConfirmIngredientsContent extends StatelessWidget {
-  const _ConfirmIngredientsContent({this.imagePath});
-
-  final String? imagePath;
+  const _ConfirmIngredientsContent();
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +36,8 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
+              left: 20,
+              right: 20,
               top: 16 + 58 + MediaQuery.of(context).padding.top,
               bottom: Responsive.height(context, 0.2),
             ),
@@ -50,12 +46,6 @@ class _ConfirmIngredientsContent extends StatelessWidget {
               children: [
                 _buildHeader(context),
                 const SizedBox(height: 24),
-                if (imagePath != null) ...[
-                  _buildSectionTitle('Selected Photo'),
-                  const SizedBox(height: 12),
-                  _buildSelectedImagePreview(),
-                  const SizedBox(height: 32),
-                ],
                 _buildSectionTitle('Detected Ingredients'),
                 const SizedBox(height: 12),
                 _buildIngredientsList(context, viewModel),
@@ -76,15 +66,27 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           ),
           _buildBottomBar(context),
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: AppHeaderActionsWrapper(
-              leading: AppNavActionButton(
-                icon: Icons.arrow_back_rounded,
-                onTap: () => Navigator.pop(context),
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.textSecondary.withValues(alpha: 0.08),
+                ),
               ),
-              title: 'Confirm Ingredients',
+            ),
+            child: AppHeaderActionsWrapper(
+                leading: AppNavActionButton(
+                  icon: Icons.arrow_back_rounded,
+                  onTap: () => Navigator.pop(context),
+                  showShadow: false,
+                  showBorder: false,
+                ),
+                title: 'Confirm Ingredients',
+              ),
             ),
           ),
         ],
@@ -116,20 +118,6 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSelectedImagePreview() {
-    if (imagePath == null) {
-      return const SizedBox.shrink();
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: AspectRatio(
-        aspectRatio: 4 / 3,
-        child: Image.file(File(imagePath!), fit: BoxFit.cover),
-      ),
     );
   }
 
@@ -177,12 +165,6 @@ class _ConfirmIngredientsContent extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            viewModel.getIngredientIcon(name),
-            color: AppColors.primary,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
           Text(
             name,
             style: GoogleFonts.inter(
@@ -254,10 +236,8 @@ class _ConfirmIngredientsContent extends StatelessWidget {
     BuildContext context,
     ConfirmIngredientsViewModel viewModel,
   ) async {
-    await showModalBottomSheet<void>(
+    await showDialog<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (_) => _AddIngredientBottomSheet(
         viewModel: viewModel,
@@ -450,65 +430,42 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           ],
         ),
         padding: EdgeInsets.fromLTRB(
+          20,
           16,
-          16,
-          16,
-          16 + MediaQuery.of(context).padding.bottom,
+          20,
+          MediaQuery.of(context).padding.bottom > 0
+              ? MediaQuery.of(context).padding.bottom + 4
+              : 20,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.step3Result);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 60),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 4,
-                shadowColor: AppColors.primary.withValues(alpha: 0.4),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Find Recipes',
-                    style: GoogleFonts.inter(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Icon(Icons.search_rounded, size: 24),
-                ],
-              ),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, Routes.step3Result);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 64),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
             ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () {
-                  // TODO: Skip preferences
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 60),
-                ),
-                child: Text(
-                  'Skip preferences',
-                  style: GoogleFonts.inter(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
+            elevation: 4,
+            shadowColor: AppColors.primary.withValues(alpha: 0.4),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Find Recipes',
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              const Icon(Icons.search_rounded, size: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -607,172 +564,175 @@ class _AddIngredientBottomSheetState extends State<_AddIngredientBottomSheet> {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return AnimatedPadding(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(bottom: bottomInset),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 48,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: AppColors.textSecondary.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Add Ingredient',
-                  style: GoogleFonts.inter(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _ingredientController,
-                  autofocus: true,
-                  textCapitalization: TextCapitalization.words,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _submitIngredient(),
-                  decoration: InputDecoration(
-                    hintText: 'e.g., Garlic, Broccoli...',
-                    hintStyle: GoogleFonts.inter(
-                      color: AppColors.textSecondary.withValues(alpha: 0.6),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    filled: true,
-                    fillColor: AppColors.background,
-                    prefixIcon: Icon(
-                      Icons.search_rounded,
-                      color: AppColors.textSecondary.withValues(alpha: 0.5),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 18,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(22),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(22),
-                      borderSide: BorderSide(
-                        color: AppColors.primary.withValues(alpha: 0.2),
-                        width: 1.5,
+    return Center(
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottomInset),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(32),
+            clipBehavior: Clip.antiAlias,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 48,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: AppColors.textSecondary.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
                       ),
                     ),
-                  ),
-                  style: GoogleFonts.inter(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  'QUICK ADD',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.3,
-                    color: AppColors.textSecondary.withValues(alpha: 0.75),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: widget.viewModel.quickAddIngredients.map((item) {
-                    final bool isSelected = _selectedQuickAdds.contains(item);
-                    return GestureDetector(
-                      onTap: () => _toggleQuickAdd(item),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 9,
+                    const SizedBox(height: 20),
+                    Text(
+                      'Add Ingredient',
+                      style: GoogleFonts.inter(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _ingredientController,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.words,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _submitIngredient(),
+                      decoration: InputDecoration(
+                        hintText: 'e.g., Garlic, Broccoli...',
+                        hintStyle: GoogleFonts.inter(
+                          color: AppColors.textSecondary.withValues(alpha: 0.6),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.background,
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primary
-                                : Colors.transparent,
+                        filled: true,
+                        fillColor: AppColors.background,
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: AppColors.textSecondary.withValues(alpha: 0.5),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 18,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(22),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(22),
+                          borderSide: BorderSide(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      style: GoogleFonts.inter(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      'QUICK ADD',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.3,
+                        color: AppColors.textSecondary.withValues(alpha: 0.75),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: widget.viewModel.quickAddIngredients.map((item) {
+                        final bool isSelected = _selectedQuickAdds.contains(item);
+                        return GestureDetector(
+                          onTap: () => _toggleQuickAdd(item),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 9,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.primary.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Text(
+                              widget.buildQuickAddLabel(item),
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 28),
+                    if (_validationMessage != null) ...[
+                      Text(
+                        _validationMessage!,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _canSubmit ? _submitIngredient : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppColors.primary.withValues(
+                            alpha: 0.45,
+                          ),
+                          disabledForegroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: Text(
-                          widget.buildQuickAddLabel(item),
+                          'Add to List',
                           style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isSelected
-                                ? Colors.white
-                                : AppColors.textPrimary,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 28),
-                if (_validationMessage != null) ...[
-                  Text(
-                    _validationMessage!,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.red.shade400,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _canSubmit ? _submitIngredient : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppColors.primary.withValues(
-                        alpha: 0.45,
-                      ),
-                      disabledForegroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      'Add to List',
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

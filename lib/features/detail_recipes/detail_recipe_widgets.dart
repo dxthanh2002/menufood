@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/colors.dart';
-import '../bottom_navigation/main_screen.dart';
 import '../../navigation/widgets.dart';
 import '../home/step3_result/step3_result_viewmodel.dart';
 
@@ -221,74 +220,55 @@ class DetailRecipeIngredientTile extends StatelessWidget {
   const DetailRecipeIngredientTile({
     super.key,
     required this.ingredient,
-    required this.isChecked,
-    required this.onChanged,
+    required this.onTap,
   });
 
   final RecipeIngredientItem ingredient;
-  final bool isChecked;
-  final VoidCallback onChanged;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(40),
+      borderRadius: BorderRadius.circular(999),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
-        onTap: onChanged,
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: isChecked
-                  ? AppColors.primary.withValues(alpha: 0.35)
-                  : AppColors.textSecondary.withValues(alpha: 0.14),
+              color: AppColors.textSecondary.withValues(alpha: 0.12),
             ),
+            color: Colors.white,
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Transform.translate(
-                offset: const Offset(-10, 0),
-                child: Checkbox(
-                  value: isChecked,
-                  onChanged: (_) => onChanged(),
-                  activeColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
+              Expanded(
+                child: Text(
+                  ingredient.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        ingredient.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      ingredient.note,
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+              const SizedBox(width: 12),
+              Text(
+                ingredient.note,
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -359,64 +339,6 @@ class DetailRecipeInstructionTile extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class DetailRecipeBottomBar extends StatelessWidget {
-  const DetailRecipeBottomBar({
-    super.key,
-    required this.onStartCooking,
-    required this.onDestinationSelected,
-  });
-
-  final VoidCallback onStartCooking;
-  final ValueChanged<int> onDestinationSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.94),
-            border: Border(
-              top: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.12),
-              ),
-            ),
-          ),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: onStartCooking,
-              icon: const Icon(Icons.play_circle_fill_rounded),
-              label: Text(
-                'Start Cooking Mode',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 58),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 0,
-              ),
-            ),
-          ),
-        ),
-        AppBottomNavigationBar(
-          currentIndex: 1,
-          onDestinationSelected: onDestinationSelected,
         ),
       ],
     );

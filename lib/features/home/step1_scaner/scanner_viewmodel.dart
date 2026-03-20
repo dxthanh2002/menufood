@@ -10,6 +10,7 @@ class ScannerViewModel extends ChangeNotifier {
   List<CameraDescription> _cameras = [];
   int _currentCameraIndex = 0;
   String? _errorMessage;
+  String? _imagePath;
   final ImagePicker _imagePicker = ImagePicker();
 
   CameraController? get controller => _controller;
@@ -17,6 +18,7 @@ class ScannerViewModel extends ChangeNotifier {
   bool get isProcessing => _isProcessing;
   FlashMode get flashMode => _flashMode;
   String? get errorMessage => _errorMessage;
+  String? get imagePath => _imagePath;
 
   Future<void> initCamera() async {
     try {
@@ -86,7 +88,8 @@ class ScannerViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _controller!.takePicture();
+      final XFile image = await _controller!.takePicture();
+      _imagePath = image.path;
     } catch (e) {
       debugPrint('Capture error: $e');
       _errorMessage = 'Could not capture image. Please try again.';
@@ -99,17 +102,27 @@ class ScannerViewModel extends ChangeNotifier {
   Future<bool> pickImageFromGallery() async {
     _errorMessage = null;
 
+    _isProcessing = true;
+    notifyListeners();
+
     try {
       final image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 90,
       );
-      return image != null;
+      if (image != null) {
+        _imagePath = image.path;
+        return true;
+      }
+      return false;
     } catch (e) {
       debugPrint('Gallery picker error: $e');
       _errorMessage = 'Could not open photo library. Please try again.';
       notifyListeners();
       return false;
+    } finally {
+      _isProcessing = false;
+      notifyListeners();
     }
   }
 

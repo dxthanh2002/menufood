@@ -9,11 +9,15 @@ class AppNavActionButton extends StatelessWidget {
     required this.icon,
     this.onTap,
     this.color,
+    this.showShadow = true,
+    this.showBorder = true,
   });
 
   final IconData icon;
   final VoidCallback? onTap;
   final Color? color;
+  final bool showShadow;
+  final bool showBorder;
 
   static const double size = 42;
   static const double horizontalPadding = 16;
@@ -31,16 +35,16 @@ class AppNavActionButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.94),
             shape: BoxShape.circle,
-            border: Border.all(
+            border: showBorder ? Border.all(
               color: AppColors.textSecondary.withValues(alpha: 0.12),
-            ),
-            boxShadow: [
+            ) : null,
+            boxShadow: showShadow ? [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
-            ],
+            ] : null,
           ),
           child: Icon(icon, color: color ?? AppColors.accentBrown),
         ),

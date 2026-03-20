@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 import '../../theme/colors.dart';
-import '../bottom_navigation/main_screen.dart';
 import '../home/step3_result/step3_result_viewmodel.dart';
-import 'detail_recipe_viewmodel.dart';
 import 'detail_recipe_widgets.dart';
 
 class DetailRecipeScreen extends StatelessWidget {
@@ -15,10 +12,7 @@ class DetailRecipeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DetailRecipeViewModel(),
-      child: _DetailRecipeContent(recipe: recipe),
-    );
+    return _DetailRecipeContent(recipe: recipe);
   }
 }
 
@@ -29,8 +23,6 @@ class _DetailRecipeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<DetailRecipeViewModel>();
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -103,8 +95,7 @@ class _DetailRecipeContent extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: DetailRecipeIngredientTile(
                             ingredient: recipe.ingredients[index],
-                            isChecked: viewModel.isIngredientChecked(index),
-                            onChanged: () => viewModel.toggleIngredient(index),
+                            onTap: () {},
                           ),
                         ),
                       ),
@@ -140,15 +131,6 @@ class _DetailRecipeContent extends StatelessWidget {
             child: const DetailRecipeHeroActions(),
           ),
         ],
-      ),
-      bottomNavigationBar: DetailRecipeBottomBar(
-        onStartCooking: () {},
-        onDestinationSelected: (index) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => MainScreen(initialIndex: index)),
-            (_) => false,
-          );
-        },
       ),
     );
   }

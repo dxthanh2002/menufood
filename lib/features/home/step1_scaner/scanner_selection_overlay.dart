@@ -22,93 +22,127 @@ class ScannerSelectionOverlay extends StatefulWidget {
 }
 
 class _ScannerSelectionOverlayState extends State<ScannerSelectionOverlay> {
-  _HandleType _activeHandle = _HandleType.none;
-  static const double _hitRadius = 36.0;
-  static const double _minSize = 50.0;
+  // Map pointer ID to the handle it's currently dragging
+  final Map<int, _HandleType> _pointerHandles = {};
+  // Map pointer ID to the initial offset from the handle at touch down
+  final Map<int, Offset> _pointerStartOffsets = {};
+  
+  static const double _hitRadius = 40.0;
+  static const double _minSize = 64.0; 
 
-  Rect get _rect => widget.selectionNotifier.value;
-  set _rect(Rect r) => widget.selectionNotifier.value = r;
+  void _onPointerDown(PointerDownEvent event) {
+    final pos = event.localPosition;
+    final r = widget.selectionNotifier.value;
 
-  _HandleType _hitTest(Offset pos) {
-    final r = _rect;
-    if ((pos - r.topLeft).distance < _hitRadius) return _HandleType.topLeft;
-    if ((pos - r.topRight).distance < _hitRadius) return _HandleType.topRight;
-    if ((pos - r.bottomLeft).distance < _hitRadius)
-      return _HandleType.bottomLeft;
-    if ((pos - r.bottomRight).distance < _hitRadius)
-      return _HandleType.bottomRight;
-    if ((pos - Offset(r.left, r.center.dy)).distance < _hitRadius)
-      return _HandleType.left;
-    if ((pos - Offset(r.right, r.center.dy)).distance < _hitRadius)
-      return _HandleType.right;
-    if (r.contains(pos)) return _HandleType.move;
-    return _HandleType.none;
-  }
+    final candidates = [
+      (handle: _HandleType.topLeft, pos: r.topLeft),
+      (handle: _HandleType.topRight, pos: r.topRight),
+      (handle: _HandleType.bottomLeft, pos: r.bottomLeft),
+      (handle: _HandleType.bottomRight, pos: r.bottomRight),
+      (handle: _HandleType.left, pos: Offset(r.left, r.center.dy)),
+      (handle: _HandleType.right, pos: Offset(r.right, r.center.dy)),
+    ];
 
-  void _onPanStart(DragStartDetails d) {
-    _activeHandle = _hitTest(d.localPosition);
-  }
+    // Find the closest handle within hit radius that isn't already taken
+    final available = candidates
+        .map((c) => (handle: c.handle, dist: (pos - c.pos).distance, pos: c.pos))
+        .where((c) => c.dist < _hitRadius && !_pointerHandles.values.contains(c.handle))
+        .toList()
+      ..sort((a, b) => a.dist.compareTo(b.dist));
+    
+    _HandleType selectedHandle = available.isNotEmpty ? available.first.handle : _HandleType.none;
 
-  void _onPanUpdate(DragUpdateDetails d) {
-    if (_activeHandle == _HandleType.none) return;
-    final dx = d.delta.dx;
-    final dy = d.delta.dy;
-    var r = _rect;
-
-    switch (_activeHandle) {
-      case _HandleType.topLeft:
-        r = Rect.fromLTRB(r.left + dx, r.top + dy, r.right, r.bottom);
-      case _HandleType.topRight:
-        r = Rect.fromLTRB(r.left, r.top + dy, r.right + dx, r.bottom);
-      case _HandleType.bottomLeft:
-        r = Rect.fromLTRB(r.left + dx, r.top, r.right, r.bottom + dy);
-      case _HandleType.bottomRight:
-        r = Rect.fromLTRB(r.left, r.top, r.right + dx, r.bottom + dy);
-      case _HandleType.left:
-        r = Rect.fromLTRB(r.left + dx, r.top, r.right, r.bottom);
-      case _HandleType.right:
-        r = Rect.fromLTRB(r.left, r.top, r.right + dx, r.bottom);
-      case _HandleType.move:
-        r = r.shift(d.delta);
-      case _HandleType.none:
-        return;
+    if (selectedHandle == _HandleType.none && r.contains(pos)) {
+      if (!_pointerHandles.values.contains(_HandleType.move)) {
+        selectedHandle = _HandleType.move;
+      }
     }
 
-    if (r.width < _minSize || r.height < _minSize) return;
+    if (selectedHandle != _HandleType.none) {
+      _pointerHandles[event.pointer] = selectedHandle;
+      // Store the offset from the touch point to the relevant anchor
+      switch (selectedHandle) {
+        case _HandleType.topLeft: _pointerStartOffsets[event.pointer] = pos - r.topLeft;
+        case _HandleType.topRight: _pointerStartOffsets[event.pointer] = pos - r.topRight;
+        case _HandleType.bottomLeft: _pointerStartOffsets[event.pointer] = pos - r.bottomLeft;
+        case _HandleType.bottomRight: _pointerStartOffsets[event.pointer] = pos - r.bottomRight;
+        case _HandleType.left: _pointerStartOffsets[event.pointer] = pos - Offset(r.left, r.center.dy);
+        case _HandleType.right: _pointerStartOffsets[event.pointer] = pos - Offset(r.right, r.center.dy);
+        case _HandleType.move: _pointerStartOffsets[event.pointer] = pos - r.topLeft;
+        case _HandleType.none: break;
+      }
+    }
+  }
+
+  void _onPointerMove(PointerMoveEvent event) {
+    final handle = _pointerHandles[event.pointer];
+    final startOffset = _pointerStartOffsets[event.pointer];
+    if (handle == null || startOffset == null) return;
+
+    final pos = event.localPosition;
+    var r = widget.selectionNotifier.value;
+    final anchor = pos - startOffset;
+
+    switch (handle) {
+      case _HandleType.topLeft:
+        r = Rect.fromLTRB(anchor.dx, anchor.dy, r.right, r.bottom);
+      case _HandleType.topRight:
+        r = Rect.fromLTRB(r.left, anchor.dy, anchor.dx, r.bottom);
+      case _HandleType.bottomLeft:
+        r = Rect.fromLTRB(anchor.dx, r.top, r.right, anchor.dy);
+      case _HandleType.bottomRight:
+        r = Rect.fromLTRB(r.left, r.top, anchor.dx, anchor.dy);
+      case _HandleType.left:
+        r = Rect.fromLTRB(anchor.dx, r.top, r.right, r.bottom);
+      case _HandleType.right:
+        r = Rect.fromLTRB(r.left, r.top, anchor.dx, r.bottom);
+      case _HandleType.move:
+        r = Rect.fromLTWH(anchor.dx, anchor.dy, r.width, r.height);
+      default: break;
+    }
 
     final size = context.size;
     if (size == null) return;
 
-    if (_activeHandle == _HandleType.move) {
-      if (r.left < 0) r = r.shift(Offset(-r.left, 0));
-      if (r.top < 0) r = r.shift(Offset(0, -r.top));
-      if (r.right > size.width) r = r.shift(Offset(size.width - r.right, 0));
-      if (r.bottom > size.height)
-        r = r.shift(Offset(0, size.height - r.bottom));
-    } else {
+    // Constraints
+    if (handle != _HandleType.move) {
+      double l = r.left, t = r.top, ri = r.right, b = r.bottom;
+      if (ri - l < _minSize) {
+        if (handle == _HandleType.topLeft || handle == _HandleType.bottomLeft || handle == _HandleType.left) l = ri - _minSize;
+        else ri = l + _minSize;
+      }
+      if (b - t < _minSize) {
+        if (handle == _HandleType.topLeft || handle == _HandleType.topRight) t = b - _minSize;
+        else b = t + _minSize;
+      }
       r = Rect.fromLTRB(
-        r.left.clamp(0.0, size.width),
-        r.top.clamp(0.0, size.height),
-        r.right.clamp(0.0, size.width),
-        r.bottom.clamp(0.0, size.height),
+        l.clamp(0.0, size.width),
+        t.clamp(0.0, size.height),
+        ri.clamp(0.0, size.width),
+        b.clamp(0.0, size.height),
       );
+    } else {
+      // Clamped move
+      double dx = anchor.dx.clamp(0.0, size.width - r.width);
+      double dy = anchor.dy.clamp(0.0, size.height - r.height);
+      r = Rect.fromLTWH(dx, dy, r.width, r.height);
     }
 
-    _rect = r;
-    setState(() {});
+    widget.selectionNotifier.value = r;
   }
 
-  void _onPanEnd(DragEndDetails d) {
-    _activeHandle = _HandleType.none;
+  void _onPointerEnd(PointerEvent event) {
+    _pointerHandles.remove(event.pointer);
+    _pointerStartOffsets.remove(event.pointer);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onPanStart: _onPanStart,
-      onPanUpdate: _onPanUpdate,
-      onPanEnd: _onPanEnd,
+    return Listener(
+      onPointerDown: _onPointerDown,
+      onPointerMove: _onPointerMove,
+      onPointerUp: _onPointerEnd,
+      onPointerCancel: _onPointerEnd,
       child: ValueListenableBuilder<Rect>(
         valueListenable: widget.selectionNotifier,
         builder: (context, rect, _) {

@@ -16,7 +16,10 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
     with SingleTickerProviderStateMixin {
   Rect _rect = Rect.zero;
   bool _initialized = false;
-  _HandleType _activeHandle = _HandleType.none;
+
+  // Multi-touch: track each pointer's handle and last position independently
+  final Map<int, _HandleType> _pointerHandles = {};
+  final Map<int, Offset> _pointerLastPos = {};
 
   static const double _hitRadius = 40.0;
   static const double _minSize = 100.0;
@@ -62,31 +65,56 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
   }
 
   _HandleType _hitTest(Offset pos) {
-    if ((pos - _rect.topLeft).distance < _hitRadius) return _HandleType.topLeft;
-    if ((pos - _rect.topRight).distance < _hitRadius)
-      return _HandleType.topRight;
-    if ((pos - _rect.bottomLeft).distance < _hitRadius)
-      return _HandleType.bottomLeft;
-    if ((pos - _rect.bottomRight).distance < _hitRadius)
-      return _HandleType.bottomRight;
-    if (_rect.contains(pos)) return _HandleType.move;
+    // Find closest corner within hit radius that isn't already claimed
+    final candidates = [
+      (handle: _HandleType.topLeft, pos: _rect.topLeft),
+      (handle: _HandleType.topRight, pos: _rect.topRight),
+      (handle: _HandleType.bottomLeft, pos: _rect.bottomLeft),
+      (handle: _HandleType.bottomRight, pos: _rect.bottomRight),
+    ];
+
+    final available = candidates
+        .map((c) => (handle: c.handle, dist: (pos - c.pos).distance))
+        .where((c) =>
+            c.dist < _hitRadius &&
+            !_pointerHandles.values.contains(c.handle))
+        .toList()
+      ..sort((a, b) => a.dist.compareTo(b.dist));
+
+    if (available.isNotEmpty) return available.first.handle;
+
+    if (_rect.contains(pos) &&
+        !_pointerHandles.values.contains(_HandleType.move)) {
+      return _HandleType.move;
+    }
     return _HandleType.none;
   }
 
-  void _onPanStart(DragStartDetails d) {
-    _activeHandle = _hitTest(d.localPosition);
-    if (_activeHandle != _HandleType.none) {
+  void _onPointerDown(PointerDownEvent event) {
+    final handle = _hitTest(event.localPosition);
+    if (handle == _HandleType.none) return;
+
+    _pointerHandles[event.pointer] = handle;
+    _pointerLastPos[event.pointer] = event.localPosition;
+
+    if (handle != _HandleType.none) {
       _showHint(const Duration(milliseconds: 500));
     }
   }
 
-  void _onPanUpdate(DragUpdateDetails d) {
-    if (_activeHandle == _HandleType.none) return;
-    final dx = d.delta.dx;
-    final dy = d.delta.dy;
+  void _onPointerMove(PointerMoveEvent event) {
+    final handle = _pointerHandles[event.pointer];
+    final lastPos = _pointerLastPos[event.pointer];
+    if (handle == null || lastPos == null) return;
+
+    final pos = event.localPosition;
+    final dx = pos.dx - lastPos.dx;
+    final dy = pos.dy - lastPos.dy;
+    _pointerLastPos[event.pointer] = pos;
+
     var r = _rect;
 
-    switch (_activeHandle) {
+    switch (handle) {
       case _HandleType.topLeft:
         r = Rect.fromLTRB(r.left + dx, r.top + dy, r.right, r.bottom);
       case _HandleType.topRight:
@@ -96,7 +124,7 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
       case _HandleType.bottomRight:
         r = Rect.fromLTRB(r.left, r.top, r.right + dx, r.bottom + dy);
       case _HandleType.move:
-        r = r.shift(d.delta);
+        r = r.shift(Offset(dx, dy));
       case _HandleType.none:
         return;
     }
@@ -106,12 +134,13 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
     final size = context.size;
     if (size == null) return;
 
-    if (_activeHandle == _HandleType.move) {
+    if (handle == _HandleType.move) {
       if (r.left < 0) r = r.shift(Offset(-r.left, 0));
       if (r.top < 0) r = r.shift(Offset(0, -r.top));
       if (r.right > size.width) r = r.shift(Offset(size.width - r.right, 0));
-      if (r.bottom > size.height)
+      if (r.bottom > size.height) {
         r = r.shift(Offset(0, size.height - r.bottom));
+      }
     } else {
       r = Rect.fromLTRB(
         r.left.clamp(0.0, size.width),
@@ -124,8 +153,9 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
     setState(() => _rect = r);
   }
 
-  void _onPanEnd(DragEndDetails d) {
-    _activeHandle = _HandleType.none;
+  void _onPointerUp(PointerEvent event) {
+    _pointerHandles.remove(event.pointer);
+    _pointerLastPos.remove(event.pointer);
   }
 
   @override
@@ -136,11 +166,12 @@ class _ScannerFrameOverlayState extends State<ScannerFrameOverlay>
 
         final hintTop = _rect.top + _rect.height * 0.65;
 
-        return GestureDetector(
+        return Listener(
           behavior: HitTestBehavior.opaque,
-          onPanStart: _onPanStart,
-          onPanUpdate: _onPanUpdate,
-          onPanEnd: _onPanEnd,
+          onPointerDown: _onPointerDown,
+          onPointerMove: _onPointerMove,
+          onPointerUp: _onPointerUp,
+          onPointerCancel: _onPointerUp,
           child: Stack(
             children: [
               CustomPaint(
