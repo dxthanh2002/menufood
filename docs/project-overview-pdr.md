@@ -93,5 +93,4 @@ MenuAI is a Flutter mobile app for ingredient-driven meal discovery. Users scan 
 
 ## Unresolved Questions
 
-- Should OCR use `google_mlkit_text_recognition` in the next phase, or was it added preemptively?
 - Should recipe recommendations come from a backend API, local rules, or a hybrid approach?

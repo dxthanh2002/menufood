@@ -26,7 +26,6 @@ MenuAI is a Flutter app for turning ingredient photos into meal ideas. The curre
 - `camera`
 - `image_picker`
 - `path_provider`
-- `google_mlkit_text_recognition`
 - `logger`
 
 ## Project Structure

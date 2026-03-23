@@ -110,14 +110,16 @@ class _ScannerContentState extends State<_ScannerContent>
             Positioned.fill(
               child: LayoutBuilder(
               builder: (context, constraints) {
+                final previewSize = vm.controller!.value.previewSize!;
+                // previewSize is in landscape (sensor) orientation,
+                // so swap width/height for portrait display.
+                final previewAspectRatio = previewSize.height / previewSize.width;
                 return ClipRect(
                   child: FittedBox(
                     fit: BoxFit.cover,
                     child: SizedBox(
                       width: constraints.maxWidth,
-                      height:
-                          constraints.maxWidth /
-                          vm.controller!.value.aspectRatio,
+                      height: constraints.maxWidth / previewAspectRatio,
                       child: CameraPreview(vm.controller!),
                     ),
                   ),

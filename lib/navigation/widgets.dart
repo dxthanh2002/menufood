@@ -69,35 +69,36 @@ class AppHeaderActionsWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppNavActionButton.horizontalPadding,
-        ),
-        child: Container(
-          height: AppNavActionButton.size + AppNavActionButton.verticalPadding * 2,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (title != null)
-                Text(
-                  title!,
-                  style: GoogleFonts.inter(
-                    color: titleColor ?? AppColors.accentBrown,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
+    final topPadding = MediaQuery.of(context).padding.top;
+    return Padding(
+      padding: EdgeInsets.only(
+        top: topPadding,
+        left: AppNavActionButton.horizontalPadding,
+        right: AppNavActionButton.horizontalPadding,
+      ),
+      child: SizedBox(
+        height: AppNavActionButton.size + AppNavActionButton.verticalPadding * 2,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (title != null)
+              Text(
+                title!,
+                style: GoogleFonts.inter(
+                  color: titleColor ?? AppColors.accentBrown,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                 ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  leading ?? const SizedBox(width: AppNavActionButton.size),
-                  if (trailing != null) trailing!,
-                ],
               ),
-            ],
-          ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                leading ?? const SizedBox(width: AppNavActionButton.size),
+                if (trailing != null) trailing!,
+              ],
+            ),
+          ],
         ),
       ),
     );

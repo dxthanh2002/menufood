@@ -11,7 +11,7 @@ Project state on 2026-03-18: early product prototype with strong UI progress and
 | Foundation | Complete | Flutter app scaffold, theme, routes, MVVM baseline |
 | Core navigation and screens | In progress | Main shell, onboarding, home, scanner, confirm, results, detail exist |
 | Image intake flow | In progress | Camera/gallery present, path handoff still incomplete |
-| Ingredient intelligence | Not started | OCR package present, no verified detection pipeline |
+| Ingredient intelligence | Not started | No OCR package or verified detection pipeline in the current app |
 | Recommendation engine | Not started | Results are currently static |
 | Persistence and account | Not started | Saved/history/settings are mostly UI only |
 | Quality hardening | Not started | Minimal test coverage and placeholder services remain |
@@ -25,7 +25,7 @@ Project state on 2026-03-18: early product prototype with strong UI progress and
 
 ## Mid-Term Priorities
 
-1. Introduce OCR integration behind a service boundary
+1. Define whether ingredient extraction is needed before introducing an OCR service boundary
 2. Define recipe recommendation source
 3. Persist saved recipes and history
 4. Flesh out settings actions and account-related behavior
@@ -41,14 +41,14 @@ Project state on 2026-03-18: early product prototype with strong UI progress and
 | Milestone | Definition Of Done |
 | --- | --- |
 | Prototype flow complete | Scan or upload leads to confirm, results, and detail using real app state |
-| Intelligence integration | OCR-derived ingredients reach confirm view reliably |
+| Intelligence integration | Ingredient-derived data reaches confirm view reliably |
 | Data-backed recipes | Results are no longer hardcoded in the UI layer |
 | Quality baseline | Analyze and test coverage catch common regressions |
 
 ## Current Blockers
 
 - No completed image-state handoff from scanner
-- No verified OCR pipeline
+- No verified ingredient-extraction pipeline
 - Services and repositories are placeholders
 
 ## Documentation Follow-Up

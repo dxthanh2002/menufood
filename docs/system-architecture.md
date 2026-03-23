@@ -83,7 +83,6 @@ Known routes:
 | --- | --- |
 | `camera` | Camera preview and capture |
 | `image_picker` | Gallery image selection |
-| `google_mlkit_text_recognition` | Declared, not yet wired into verified flow |
 | `get_it` | DI registration |
 | `provider` | UI state management |
 
@@ -98,8 +97,8 @@ Known routes:
 - Complete image-path handoff through scanner to confirm flow
 - Define one recipe domain model strategy
 - Move mock content behind repositories or local data sources
-- Introduce explicit OCR and recommendation boundaries before backend work
+- Introduce explicit ingredient-extraction and recommendation boundaries before backend work
 
 ## Unresolved Questions
 
-- Is OCR intended to be on-device only, or a precursor to a backend-assisted pipeline?
+- Should ingredient extraction stay client-side, or become part of a backend-assisted pipeline later?
