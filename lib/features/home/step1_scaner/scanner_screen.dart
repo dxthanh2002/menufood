@@ -322,33 +322,17 @@ class _ScannerContentState extends State<_ScannerContent>
   Widget _buildUploadButton() {
     return GestureDetector(
       onTap: _onUploadPressed,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // This spacer centers the icon circle relative to the capture button
-          // by offsetting the text height and spacing below.
-          const SizedBox(height: 20),
-          _buildGlassSurface(
-            width: 48,
-            height: 48,
-            borderRadius: BorderRadius.circular(24),
-            child: const Icon(
-              Icons.photo_library_outlined,
-              color: Colors.white,
-              size: 20,
-            ),
+      child: Center(
+        child: _buildGlassSurface(
+          width: 50,
+          height: 50,
+          borderRadius: BorderRadius.circular(25),
+          child: const Icon(
+            Icons.photo_library_outlined,
+            color: Colors.white,
+            size: 22,
           ),
-          const SizedBox(height: 5),
-          Text(
-            'UPLOAD',
-            style: GoogleFonts.inter(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -357,8 +341,8 @@ class _ScannerContentState extends State<_ScannerContent>
     return GestureDetector(
       onTap: vm.isProcessing ? null : _onCapturePressed,
       child: Container(
-        width: 80,
-        height: 80,
+        width: 82,
+        height: 82,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           boxShadow: [
@@ -382,7 +366,7 @@ class _ScannerContentState extends State<_ScannerContent>
           child: const Icon(
             Icons.camera_alt_rounded,
             color: Colors.white,
-            size: 32,
+            size: 34,
           ),
         ),
       ),
