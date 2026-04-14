@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+import '../../../utils/console.dart';
 
 class ScannerViewModel extends ChangeNotifier {
   CameraController? _controller;
@@ -21,6 +27,11 @@ class ScannerViewModel extends ChangeNotifier {
   String? get imagePath => _imagePath;
 
   Future<void> initCamera() async {
+    if (Platform.isLinux) {
+      _isInitialized = true; // Mark as initialized for mock mode
+      notifyListeners();
+      return;
+    }
     try {
       _cameras = await availableCameras();
       if (_cameras.isEmpty) return;
@@ -80,7 +91,35 @@ class ScannerViewModel extends ChangeNotifier {
     await _startCamera(_cameras[_currentCameraIndex]);
   }
 
+  Future<String> downloadMockIngredientImage() async {
+    // Free stock image of ingredients/food
+    const imageUrl = 'https://picsum.photos/800/600?random=1';
+
+    final dio = Dio();
+    final response = await dio.get(
+      imageUrl,
+      options: Options(responseType: ResponseType.bytes),
+    );
+
+    final directory = await getTemporaryDirectory();
+    final imagePath =
+        '${directory.path}/mock_ingredient_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    final file = File(imagePath);
+    await file.writeAsBytes(response.data);
+
+    return imagePath;
+  }
+
   Future<void> captureImage() async {
+    if (Platform.isLinux) {
+      _imagePath = await downloadMockIngredientImage();
+      Console.log("FAKE CAPTURE");
+      Console.log(_imagePath);
+
+      notifyListeners();
+      return;
+    }
     if (_controller == null || !_isInitialized || _isProcessing) return;
 
     _isProcessing = true;

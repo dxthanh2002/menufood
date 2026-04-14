@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/recipe.dart';
 import '../../../navigation/widgets.dart';
 import '../../../theme/colors.dart';
 import 'step3_result_viewmodel.dart';
-import 'step3_result_widgets.dart';
+import 'step3_result_card.dart';
 
 class Step3ResultScreen extends StatelessWidget {
-  const Step3ResultScreen({super.key});
+  final List<SearchRecipeItem> recipes;
+  const Step3ResultScreen({super.key, required this.recipes});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => Step3ResultViewModel(),
+      create: (_) => Step3ResultViewModel(recipes),
       child: const _Step3ResultContent(),
     );
   }
@@ -34,7 +36,8 @@ class _Step3ResultContent extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: MediaQuery.of(context).padding.top +
+                  height:
+                      MediaQuery.of(context).padding.top +
                       AppNavActionButton.size +
                       AppNavActionButton.verticalPadding * 2,
                 ),

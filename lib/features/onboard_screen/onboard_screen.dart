@@ -1,4 +1,8 @@
+import 'package:ai_menu_flutter/services/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../services/app_service.dart';
 
 class OnboardScreen extends StatelessWidget {
   const OnboardScreen({super.key});
@@ -151,7 +155,8 @@ class OnboardScreen extends StatelessWidget {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
+                    final appService = context.read<AppService>();
+                    appService.onboarded = true;
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,

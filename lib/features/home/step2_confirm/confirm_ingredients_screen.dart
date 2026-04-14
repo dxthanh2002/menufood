@@ -9,14 +9,14 @@ import '../../../utils/responsive_util.dart';
 import 'confirm_ingredients_viewmodel.dart';
 
 class ConfirmIngredientsScreen extends StatelessWidget {
-  const ConfirmIngredientsScreen({super.key, this.imagePath});
+  const ConfirmIngredientsScreen({super.key, required this.imagePath});
 
-  final String? imagePath;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ConfirmIngredientsViewModel(),
+      create: (_) => ConfirmIngredientsViewModel(imagePath),
       child: const _ConfirmIngredientsContent(),
     );
   }
@@ -30,6 +30,34 @@ class _ConfirmIngredientsContent extends StatelessWidget {
     final viewModel = context.watch<ConfirmIngredientsViewModel>();
     final mediaQuery = MediaQuery.of(context);
 
+    if (viewModel.loadingIngredient || viewModel.isSearchingLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 3,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                viewModel.loadingIngredient
+                    ? 'Analyzing ingredients...'
+                    : 'Searching recipe...',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -39,7 +67,8 @@ class _ConfirmIngredientsContent extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 20,
               right: 20,
-              top: 16 +
+              top:
+                  16 +
                   AppNavActionButton.size +
                   AppNavActionButton.verticalPadding * 2 +
                   mediaQuery.padding.top,
@@ -68,7 +97,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
               ],
             ),
           ),
-          _buildBottomBar(context),
+          _buildBottomBar(context, viewModel),
           Positioned(
             top: 0,
             left: 0,
@@ -97,7 +126,6 @@ class _ConfirmIngredientsContent extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildHeader(BuildContext context) {
     return Column(
@@ -145,7 +173,7 @@ class _ConfirmIngredientsContent extends StatelessWidget {
       spacing: 8,
       runSpacing: 12,
       children: [
-        ...viewModel.detectedIngredients.map(
+        ...viewModel.detectedIngredients!.map(
           (ingredient) => _buildIngredientChip(context, viewModel, ingredient),
         ),
         _buildAddIngredientButton(context, viewModel),
@@ -413,7 +441,10 @@ class _ConfirmIngredientsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context) {
+  Widget _buildBottomBar(
+    BuildContext context,
+    ConfirmIngredientsViewModel viewModel,
+  ) {
     return SafeArea(
       top: false,
       child: Align(
@@ -437,7 +468,11 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              // pass data to step 3
+              final searchResult = await viewModel
+                  .searchRecipeWithIngredients();
+
               Navigator.pushNamed(context, Routes.step3Result);
             },
             style: ElevatedButton.styleFrom(
@@ -587,7 +622,9 @@ class _AddIngredientBottomSheetState extends State<_AddIngredientBottomSheet> {
                         width: 48,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: AppColors.textSecondary.withValues(alpha: 0.18),
+                          color: AppColors.textSecondary.withValues(
+                            alpha: 0.18,
+                          ),
                           borderRadius: BorderRadius.circular(999),
                         ),
                       ),
@@ -657,8 +694,12 @@ class _AddIngredientBottomSheetState extends State<_AddIngredientBottomSheet> {
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
-                      children: widget.viewModel.quickAddIngredients.map((item) {
-                        final bool isSelected = _selectedQuickAdds.contains(item);
+                      children: widget.viewModel.quickAddIngredients.map((
+                        item,
+                      ) {
+                        final bool isSelected = _selectedQuickAdds.contains(
+                          item,
+                        );
                         return GestureDetector(
                           onTap: () => _toggleQuickAdd(item),
                           child: AnimatedContainer(

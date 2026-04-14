@@ -1,28 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/colors.dart';
 import '../home/step3_result/step3_result_viewmodel.dart';
+import 'detail_recipe_viewmodel.dart';
 import 'detail_recipe_widgets.dart';
 
 class DetailRecipeScreen extends StatelessWidget {
-  const DetailRecipeScreen({super.key, required this.recipe});
+  const DetailRecipeScreen({super.key, required this.recipeId});
 
-  final Step3ResultRecipe recipe;
+  final String recipeId;
 
   @override
   Widget build(BuildContext context) {
-    return _DetailRecipeContent(recipe: recipe);
+    return ChangeNotifierProvider(
+      create: (_) => DetailRecipeViewModel()..loadRecipeDetails(recipeId),
+      child: const _DetailRecipeContent(),
+    );
   }
 }
 
 class _DetailRecipeContent extends StatelessWidget {
-  const _DetailRecipeContent({required this.recipe});
-
-  final Step3ResultRecipe recipe;
+  const _DetailRecipeContent();
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<DetailRecipeViewModel>();
+
+    if (viewModel.loadingRecipeDetail) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 3,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Loading recipe...',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final recipe = viewModel.recipe;
+    if (recipe == null) {
+      return const SizedBox.shrink();
+    }
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -80,7 +111,7 @@ class _DetailRecipeContent extends StatelessWidget {
                       DetailRecipeSectionTitle(
                         title: 'Ingredients',
                         trailing: Text(
-                          recipe.servings,
+                          recipe.servings.toString(),
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,

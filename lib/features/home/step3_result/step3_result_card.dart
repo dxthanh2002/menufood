@@ -90,7 +90,7 @@ class ResultRecipeCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          recipe.highlight.toUpperCase(),
+                          recipe.shortDescription.toUpperCase(),
                           style: GoogleFonts.inter(
                             color: AppColors.primary,
                             fontSize: 11,

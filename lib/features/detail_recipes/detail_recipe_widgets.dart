@@ -1,3 +1,4 @@
+import 'package:ai_menu_flutter/features/detail_recipes/detail_recipe_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -55,7 +56,7 @@ class DetailRecipeHero extends StatelessWidget {
 class DetailRecipeHeroBackground extends StatelessWidget {
   const DetailRecipeHeroBackground({super.key, required this.recipe});
 
-  final Step3ResultRecipe recipe;
+  final RecipeDetail recipe;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +109,7 @@ class DetailRecipeHeroActions extends StatelessWidget {
 class DetailRecipeInfoBar extends StatelessWidget {
   const DetailRecipeInfoBar({super.key, required this.recipe});
 
-  final Step3ResultRecipe recipe;
+  final RecipeDetail recipe;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +133,7 @@ class DetailRecipeInfoBar extends StatelessWidget {
           const DetailRecipeInfoDivider(),
           DetailRecipeInfoTile(
             icon: Icons.local_fire_department_rounded,
-            label: recipe.calories,
+            label: recipe.calories.toString(),
           ),
         ],
       ),
@@ -223,7 +224,7 @@ class DetailRecipeIngredientTile extends StatelessWidget {
     required this.onTap,
   });
 
-  final RecipeIngredientItem ingredient;
+  final RecipeIngredient ingredient;
   final VoidCallback onTap;
 
   @override
@@ -287,7 +288,7 @@ class DetailRecipeInstructionTile extends StatelessWidget {
   });
 
   final int index;
-  final RecipeInstructionStep instruction;
+  final RecipeInstruction instruction;
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +320,7 @@ class DetailRecipeInstructionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  instruction.title,
+                  instruction.step,
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -344,4 +345,3 @@ class DetailRecipeInstructionTile extends StatelessWidget {
     );
   }
 }
-

@@ -68,7 +68,11 @@ class _ScannerContentState extends State<_ScannerContent>
       return;
     }
 
-    Navigator.pushNamed(context, Routes.confirmIngredients, arguments: vm.imagePath);
+    Navigator.pushNamed(
+      context,
+      Routes.confirmIngredients,
+      arguments: vm.imagePath,
+    );
   }
 
   Future<void> _onUploadPressed() async {
@@ -85,7 +89,11 @@ class _ScannerContentState extends State<_ScannerContent>
     }
 
     if (isImageSelected) {
-      Navigator.pushNamed(context, Routes.confirmIngredients, arguments: vm.imagePath);
+      Navigator.pushNamed(
+        context,
+        Routes.confirmIngredients,
+        arguments: vm.imagePath,
+      );
     }
   }
 
@@ -105,82 +113,85 @@ class _ScannerContentState extends State<_ScannerContent>
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-          // Camera preview â€” fullscreen with BoxFit.cover logic
-          if (vm.isInitialized && vm.controller != null)
-            Positioned.fill(
-              child: LayoutBuilder(
-              builder: (context, constraints) {
-                final previewSize = vm.controller!.value.previewSize!;
-                // previewSize is in landscape (sensor) orientation,
-                // so swap width/height for portrait display.
-                final previewAspectRatio = previewSize.height / previewSize.width;
-                return ClipRect(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: constraints.maxWidth / previewAspectRatio,
-                      child: CameraPreview(vm.controller!),
-                    ),
-                  ),
-                );
-              },
-              ),
-            )
-          else
-            const Positioned.fill(
-              child: ColoredBox(
-                color: Colors.black,
-                child: Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-              ),
-            ),
-
-          // Scanner frame overlay
-          const Positioned.fill(child: ScannerFrameOverlay()),
-
-          // Top bar
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(bottom: false, child: _buildTopBar(vm)),
-          ),
-
-          // Bottom controls
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildBottomControls(vm),
-          ),
-
-          // Processing overlay
-          if (vm.isProcessing)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(color: AppColors.primary),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Detecting...',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+            // Camera preview â€” fullscreen with BoxFit.cover logic
+            if (vm.isInitialized && vm.controller != null)
+              Positioned.fill(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final previewSize = vm.controller!.value.previewSize!;
+                    // previewSize is in landscape (sensor) orientation,
+                    // so swap width/height for portrait display.
+                    final previewAspectRatio =
+                        previewSize.height / previewSize.width;
+                    return ClipRect(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: constraints.maxWidth,
+                          height: constraints.maxWidth / previewAspectRatio,
+                          child: CameraPreview(vm.controller!),
                         ),
                       ),
-                    ],
+                    );
+                  },
+                ),
+              )
+            else
+              const Positioned.fill(
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
                   ),
                 ),
               ),
+
+            // Scanner frame overlay
+            const Positioned.fill(child: ScannerFrameOverlay()),
+
+            // Top bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(bottom: false, child: _buildTopBar(vm)),
             ),
-        ],
+
+            // Bottom controls
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildBottomControls(vm),
+            ),
+
+            // Processing overlay
+            if (vm.isProcessing)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Detecting...',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -317,7 +328,6 @@ class _ScannerContentState extends State<_ScannerContent>
       ),
     );
   }
-
 
   Widget _buildUploadButton() {
     return GestureDetector(

@@ -1,11 +1,14 @@
+// lib/features/saved/saved_screen.dart
+import 'package:ai_menu_flutter/features/saved/saved_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/app_service.dart';
 import '../bottom_navigation/root-tab-app-bar.dart';
 import '../../models/recipe.dart';
 import '../../theme/colors.dart';
 import '../../utils/responsive_util.dart';
-import 'widgets/saved_recipe_card.dart';
 import '../../navigation/routes.dart';
-import '../home/step3_result/step3_result_viewmodel.dart';
+import 'widgets/saved_recipe_card.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key, this.showBackButton = false});
@@ -17,77 +20,50 @@ class SavedScreen extends StatefulWidget {
 }
 
 class _SavedScreenState extends State<SavedScreen> {
-  final List<String> categories = [
-    'All',
-    'Quick',
-    'Healthy',
-    'Vegetarian',
-    'Desserts',
-  ];
-  String selectedCategory = 'All';
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => SavedRecipesViewModel(),
+      child: _SavedScreenContent(showBackButton: widget.showBackButton),
+    );
+  }
+}
 
-  // Mock data for the saved recipes
-  final List<Map<String, dynamic>> savedRecipes = [
-    {
-      'recipe': Recipe(
-        id: '1',
-        title: 'Tomato Egg Stir Fry',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBRLjuHmRk18TtUed0gfp6S-obAXPJtzWHyfiVyAECXp9hpxWO3D4QiFgplV79W5w8hDeRXDT3nK7dXefQJ5jaEHKoTB3D4DyRvUpPQONyrhzsYXKzCI_FF_NZgKI7fVMB4k1KZUvm8_hwZDNjmzlPUzullbeFbQSujtyk2dWV8_o-PjO82HMcKrg7a40ffHNSM3eaBQRLJrq05pvzMOg6-15FR_n6rN2G314x8q9FtesQreVUwOC8nzeUlnD5aLMchWJYp5k0r5cw',
-        duration: '15 mins',
-        difficulty: 'Easy',
-        rating: 4.5,
-      ),
-      'typeTag': 'Dinner',
-    },
-    {
-      'recipe': Recipe(
-        id: '2',
-        title: 'Mediterranean Salad',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBiZawCjBgv8atWtOjkVP1gS0fBiVDxUgFU4o3IkqR5_ivA4x4HiwvO0LMrVzS1H95f8MKyvxnyZDlYyk_TWkOxXW-B9PYxBpId1mpBSrM4v-VV55Ea_014teczMqeLZu-4koI6jT8jNGZYwOv8wtlsiBfyC6QjHGDiMBX54izcT4o-vKYtqfm1AeFH3WtTxPtPiQM2QtsW0lAS6m6eRYkZMXgcinb9MkhWTEHnTBMdsuerhns06rQC4NGoka0is4QHMFTZn0Tpc0A',
-        duration: '10 mins',
-        difficulty: 'Easy',
-        rating: 4.8,
-      ),
-      'typeTag': 'Healthy',
-    },
-    {
-      'recipe': Recipe(
-        id: '3',
-        title: 'Lemon Garlic Salmon',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuB33GeMAE1MYAo8ahXAc7A3aXMgMngxak6nySpz7t-UC3XkCcWh8t_rsd6mN-EaRbGo28MSju3knqvz8MOLeBWINd3wvyBEFLDNtGfUFbrhyPotSljj2jGu11irKPc5s_p2RhwBTv9uCfGpDHW5EavjcUYn0aWCVMekHoT659sy_I7-pzV82d3uaCe9kkd1EAdyHq_KiryOWIADap3ulqTiH5QQbDH_IZfUcomSXyB071bXt5_Y2sfJLo_VACEbbEs5wXMe_d1ZBGY',
-        duration: '25 mins',
-        difficulty: 'Medium',
-        rating: 4.9,
-      ),
-      'typeTag': 'High Protein',
-    },
-    {
-      'recipe': Recipe(
-        id: '4',
-        title: 'Glazed Baked Donuts',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBfxoJYtsumTskA4koLkT1k70AArgfDgVNuQ3AC4AJY9m-PJFsGDH_eLKiknJX6aVI-ntqhF58pl6HlMqaHmPLMO9gNpzSQ46uviXmaMENEzHAt9ufuzzfy-e6DOHM4YkIPeYI3nLcVMaeXzEdGQmTTalZjPyYVKHYuUEMnnHyKDS5ULd0D6SeKAwe-aDz65B6bD-HuQGvdTT9jDN052DdmkNTWiihwQ5XyJ2xgwRMS484Dwc4qqr27GD1WulR9Pqn0YztItu_jrhU',
-        duration: '45 mins',
-        difficulty: 'Medium',
-        rating: 4.7,
-      ),
-      'typeTag': 'Dessert',
-    },
-  ];
+class _SavedScreenContent extends StatelessWidget {
+  final bool showBackButton;
+  const _SavedScreenContent({required this.showBackButton});
 
   @override
   Widget build(BuildContext context) {
-    bool isDesktop = Responsive.isDesktop(context);
-    bool isTablet = Responsive.isTablet(context);
+    final appService = context.watch<AppService>();
+    if (!appService.initialized) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: AppColors.primary),
+              SizedBox(height: 16),
+              Text(
+                'Initializing...',
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    final viewModel = context.watch<SavedRecipesViewModel>();
+
+    final isDesktop = Responsive.isDesktop(context);
+    final isTablet = Responsive.isTablet(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: RootTabAppBar(
         title: 'Saved Recipes',
-        leading: widget.showBackButton
+        leading: showBackButton
             ? RootTabAppBar.buildActionButton(
                 icon: const Icon(
                   Icons.arrow_back_rounded,
@@ -100,47 +76,17 @@ class _SavedScreenState extends State<SavedScreen> {
       body: Column(
         children: [
           _buildSearchBar(),
-          _buildCategories(),
-          Expanded(child: _buildRecipeList(context, isDesktop, isTablet)),
-        ],
-      ),
-    );
-  }
-
-  void _navigateToDetail(BuildContext context, Recipe recipe) {
-    // Try to find a rich recipe from the mock data in Step3ResultViewModel
-    // If not found, create a placeholder rich recipe based on the current recipe.
-    final mockRichRecipes = Step3ResultViewModel().recipes;
-
-    final Step3ResultRecipe richRecipe = mockRichRecipes.firstWhere(
-      (r) => r.title == recipe.title,
-      orElse: () => Step3ResultRecipe(
-        title: recipe.title,
-        imageUrl: recipe.imageUrl,
-        description:
-            'A delicious ${recipe.title} prepared with fresh ingredients.',
-        duration: recipe.duration,
-        difficulty: recipe.difficulty,
-        highlight: 'Saved',
-        calories: '--- kcal',
-        servings: '2 servings',
-        ingredients: [
-          const RecipeIngredientItem(name: 'Main ingredients', note: 'fresh'),
-        ],
-        instructions: [
-          const RecipeInstructionStep(
-            title: 'Prepare',
-            description: 'Get all your ingredients ready for cooking.',
-          ),
-          const RecipeInstructionStep(
-            title: 'Cook',
-            description: 'Cook according to your preferred method.',
+          _buildCategories(viewModel),
+          Expanded(
+            child: viewModel.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  )
+                : _buildRecipeList(context, viewModel, isDesktop, isTablet),
           ),
         ],
       ),
     );
-
-    Navigator.pushNamed(context, Routes.detailRecipe, arguments: richRecipe);
   }
 
   Widget _buildSearchBar() {
@@ -171,20 +117,20 @@ class _SavedScreenState extends State<SavedScreen> {
     );
   }
 
-  Widget _buildCategories() {
+  Widget _buildCategories(SavedRecipesViewModel viewModel) {
     return SizedBox(
       height: 60,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        itemCount: categories.length,
+        itemCount: viewModel.categories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = selectedCategory == category;
+          final category = viewModel.categories[index];
+          final isSelected = viewModel.selectedCategory == category;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: GestureDetector(
-              onTap: () => setState(() => selectedCategory = category),
+              onTap: () => viewModel.selectCategory(category),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -212,9 +158,44 @@ class _SavedScreenState extends State<SavedScreen> {
     );
   }
 
-  Widget _buildRecipeList(BuildContext context, bool isDesktop, bool isTablet) {
+  Widget _buildRecipeList(
+    BuildContext context,
+    SavedRecipesViewModel viewModel,
+    bool isDesktop,
+    bool isTablet,
+  ) {
+    final recipes = viewModel.filteredRecipes;
+
+    if (recipes.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.favorite_border,
+              size: 64,
+              color: AppColors.textSecondary,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'No saved recipes yet',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Save your favorite recipes to see them here',
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (isDesktop || isTablet) {
-      // Use GridView for larger screens
       return GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,30 +204,33 @@ class _SavedScreenState extends State<SavedScreen> {
           mainAxisSpacing: 16,
           childAspectRatio: 0.85,
         ),
-        itemCount: savedRecipes.length,
+        itemCount: recipes.length,
         itemBuilder: (context, index) {
-          final data = savedRecipes[index];
+          final data = recipes[index];
           return _buildGridCard(
             context,
             data['recipe'] as Recipe,
             data['typeTag'] as String,
+            viewModel,
           );
         },
       );
     } else {
-      // Use ListView for mobile (Horizontal cards)
       return ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: savedRecipes.length,
+        itemCount: recipes.length,
         itemBuilder: (context, index) {
-          final data = savedRecipes[index];
+          final data = recipes[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: SavedRecipeCard(
               recipe: data['recipe'] as Recipe,
               typeTag: data['typeTag'] as String,
-              onTap: () => _navigateToDetail(context, data['recipe'] as Recipe),
-              onFavoriteTap: () {},
+              onTap: () =>
+                  viewModel.navigateToDetail(context, data['recipe'] as Recipe),
+              onFavoriteTap: () {
+                viewModel.removeSavedRecipe((data['recipe'] as Recipe).id);
+              },
             ),
           );
         },
@@ -254,9 +238,14 @@ class _SavedScreenState extends State<SavedScreen> {
     }
   }
 
-  Widget _buildGridCard(BuildContext context, Recipe recipe, String tag) {
+  Widget _buildGridCard(
+    BuildContext context,
+    Recipe recipe,
+    String tag,
+    SavedRecipesViewModel viewModel,
+  ) {
     return InkWell(
-      onTap: () => _navigateToDetail(context, recipe),
+      onTap: () => viewModel.navigateToDetail(context, recipe),
       borderRadius: BorderRadius.circular(24),
       child: Container(
         decoration: BoxDecoration(
@@ -295,7 +284,9 @@ class _SavedScreenState extends State<SavedScreen> {
                             Icons.favorite,
                             color: AppColors.primary,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            viewModel.removeSavedRecipe(recipe.id);
+                          },
                         ),
                       ),
                     ),
