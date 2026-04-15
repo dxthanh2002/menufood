@@ -62,10 +62,7 @@ class RootTabAppBar extends StatelessWidget implements PreferredSizeWidget {
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(
-          color: AppColors.navDivider,
-          height: 1,
-        ),
+        child: Container(color: AppColors.navDivider, height: 1),
       ),
     );
   }

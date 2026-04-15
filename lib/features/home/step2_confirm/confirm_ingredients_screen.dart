@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/recipe.dart';
 import '../../../navigation/routes.dart';
 import '../../../navigation/widgets.dart';
 import '../../../theme/colors.dart';
+import '../../../utils/console.dart';
 import '../../../utils/responsive_util.dart';
 import 'confirm_ingredients_viewmodel.dart';
 
@@ -470,10 +472,14 @@ class _ConfirmIngredientsContent extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () async {
               // pass data to step 3
-              final searchResult = await viewModel
+              final List<SearchRecipeItem>? searchResult = await viewModel
                   .searchRecipeWithIngredients();
 
-              Navigator.pushNamed(context, Routes.step3Result);
+              Navigator.pushNamed(
+                context,
+                Routes.step3Result,
+                arguments: searchResult,
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,

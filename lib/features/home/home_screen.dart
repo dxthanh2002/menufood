@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../services/app_service.dart';
+import '../../utils/console.dart';
 import '../bottom_navigation/root-tab-app-bar.dart';
 import '../bottom_navigation/navigation_viewmodel.dart';
 import '../../theme/colors.dart';
@@ -16,6 +18,19 @@ class HomeScreen extends StatelessWidget {
       create: (_) => HomeViewModel(),
       child: Consumer<HomeViewModel>(
         builder: (context, viewModel, child) {
+          final appService = context.watch<AppService>();
+          if (!appService.initialized) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 2,
+              ),
+            );
+          }
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            viewModel.loadSuggestion();
+          });
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: const RootTabAppBar(title: 'MenuAI'),
@@ -162,7 +177,8 @@ class HomeScreen extends StatelessWidget {
 
                                   // Upload Button
                                   OutlinedButton.icon(
-                                    onPressed: () => viewModel.pickImageToConfirm(context),
+                                    onPressed: () =>
+                                        viewModel.pickImageToConfirm(context),
                                     icon: Icon(
                                       Icons.upload_file_rounded,
                                       size: Responsive.scale(context, 20),
@@ -240,32 +256,37 @@ class HomeScreen extends StatelessWidget {
                                     context,
                                     140,
                                   ).clamp(120.0, 180.0).toDouble(),
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    physics: const BouncingScrollPhysics(),
-                                    children: [
-                                      _buildDishItem(
-                                        context,
-                                        'Fresh Pasta',
-                                        'https://lh3.googleusercontent.com/aida-public/AB6AXuCfQbFFoq5WfZjqa8YjW5VBjE-lVRMIcNmbb9KGiiFVd_U8zlko9zYc9ZBoA0QtRCZgvZRW5LhHlaagCwgw_be2t5miG65T3jYcr2_G41Pu-FGx1RzBfzj-R6Ejj6Fq968Qyl1ihLrwWxjrjzd2-tRUX31RryQt21Naa0lgHiXyN9XHZjnc_3FSDbJ1G_rCM1FnbNWNuAqlV-MKaZqT7B-oGws95-yuMICtTwK85WsA6lX7JzVuDCHGmabab8VvzRUZqBlOPBZfBvI',
-                                      ),
-                                      _buildDishItem(
-                                        context,
-                                        'Herb Omelet',
-                                        'https://lh3.googleusercontent.com/aida-public/AB6AXuDeneYEGfFziZ8XdM6vRgpwwD5qZJMn9mv29E8_6tsCHz2hn5_M6xnBdCpu0CkYp-bJa2SsubMAk2xw-PVqhkXo6kVu7pEhyRHF-rJxtJKes7ue2e5q5mFVQa2QaejFpwrV46OF7ujGhXj9SmmhI17frq9CjsYxz_hFTbHXB6rOo2-nZnIna_Gn4WaLlcZ1k1L9ShPtMJuGSfegGpZdx32p7SWUwCIXboAo8sbwR_dKt-w_mj2kJLbwH25mOTbwW_of38lFp7jaDfI',
-                                      ),
-                                      _buildDishItem(
-                                        context,
-                                        'Garden Salad',
-                                        'https://lh3.googleusercontent.com/aida-public/AB6AXuBI_4EG6xH4pxpMwGxh22BI0ZwSojP4md47M_8DqWkfKJWgvJuUmlx2GUpOth39laqNLj6A4kYfnnPFODtLH3nlEnpxGvUC8f074T3Q8D7u0PA3myfL8vWMkw5KviNDUyQS2qVpgNrCCtXZqm8xAvTLeR1Kf7CsNwm6D1fhtfuQzcmu127D94m8cdr5KQaB3241y-Vha6xXu4biHwmKvVkB3uEvNyDGWxCfZ_enehBhcKoo6ScPDCdDSDVLeSYEVtg3xsoZf9pkDeU',
-                                      ),
-                                      _buildDishItem(
-                                        context,
-                                        'Quinoa Bowl',
-                                        'https://lh3.googleusercontent.com/aida-public/AB6AXuCVBoQiHsioegc1uRzNeUdpFQILKYPmji28m76VH_t5thYUW2OumRZz6FsUgIk--Pi-N7VIlrcufQsBPfQCX1xrqPKReH-cZOy-F2pOyljDEzPVf0lXzn3e1UPBeQpRlgTzizQy-EFlw8OQ4sQGBLKokNEtDR0ocRCzi0YmXsk1mQ9ULwEvY5z5CQG8TPGxmBpRptGrGO3JM0Or8RPvtZhoM48k3CzFmJyrWLX3de8llLBL_r0ZmsoMCDD3TS5IjXreRU19-jgDzkw',
-                                      ),
-                                    ],
-                                  ),
+                                  child: viewModel.loadingSuggestion
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.primary,
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount:
+                                              viewModel.suggestions.length,
+                                          itemBuilder: (context, index) {
+                                            final item =
+                                                viewModel.suggestions[index];
+                                            return _buildDishItem(
+                                              context,
+                                              item.name ?? 'Unknown',
+                                              item.imageUrl ?? '',
+                                              onTap: () {
+                                                viewModel.navigateToDetail(
+                                                  context,
+                                                  viewModel
+                                                      .suggestions[index]
+                                                      .id!,
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                 ),
                               ],
                             ),
@@ -283,39 +304,60 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDishItem(BuildContext context, String name, String imageUrl) {
+  Widget _buildDishItem(
+    BuildContext context,
+    String name,
+    String imageUrl, {
+    required VoidCallback onTap,
+  }) {
     final itemWidth = Responsive.scale(
       context,
       120,
     ).clamp(100.0, 150.0).toDouble();
-    return Container(
-      width: itemWidth,
-      margin: const EdgeInsets.only(right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                width: itemWidth,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: itemWidth,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  width: itemWidth,
+                  errorBuilder: (context, error, stackTrace) {
+                    Console.log('❌ Image failed to load: $name');
+                    Console.log('❌ URL: $imageUrl');
+                    Console.log('❌ Error: $error');
+                    return Container(
+                      color: Colors.grey[200],
+                      child: const Icon(
+                        Icons.broken_image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            name,
-            style: TextStyle(
-              fontSize: Responsive.scale(context, 14),
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+            const SizedBox(height: 8),
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: Responsive.scale(context, 14),
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

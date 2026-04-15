@@ -47,9 +47,12 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
         ingredients: detectedIngredients ?? [],
       );
 
+      if (searchResponse.data != null) {
+        Console.log("Items exists: ${searchResponse.data!.items != null}");
+        Console.log("Items count: ${searchResponse.data!.items?.length ?? 0}");
+      }
+
       await Future.delayed(Duration(milliseconds: 400));
-      _isSearchingLoading = false;
-      notifyListeners();
 
       if (searchResponse.error == true) {
         Console.error("WTF searching");
@@ -62,6 +65,9 @@ class ConfirmIngredientsViewModel extends ChangeNotifier {
       notifyListeners();
       Console.error("Search error: $e");
       return null;
+    } finally {
+      _isSearchingLoading = false;
+      notifyListeners();
     }
   }
 

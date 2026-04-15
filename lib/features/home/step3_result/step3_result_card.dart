@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../navigation/routes.dart';
 import '../../../theme/colors.dart';
+import '../../../utils/console.dart';
 import 'step3_result_viewmodel.dart';
 
 class ResultRecipeCard extends StatelessWidget {
@@ -13,7 +14,7 @@ class ResultRecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void openDetailRecipe() {
-      Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipe);
+      Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipe.id);
     }
 
     return InkWell(
@@ -38,7 +39,22 @@ class ResultRecipeCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: 16 / 10,
-              child: Image.network(recipe.imageUrl, fit: BoxFit.cover),
+              child: Image.network(
+                recipe.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  Console.log('❌ Failed to load image: ${recipe.imageUrl}');
+                  Console.log('Error: $error');
+                  return Container(
+                    color: Colors.grey[200],
+                    child: const Icon(
+                      Icons.restaurant,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(20),

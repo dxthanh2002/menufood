@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/colors.dart';
 import '../home/home_screen.dart';
-import '../recipes/recipes_screen.dart';
+import '../trending_recipes/recipes_screen.dart';
 import '../saved/saved_screen.dart';
 import '../user_setting/user_setting_screen.dart';
 import 'navigation_viewmodel.dart';
@@ -30,7 +30,7 @@ class MainContent extends StatelessWidget {
 
     const List<Widget> screens = [
       HomeScreen(),
-      RecipesScreen(),
+      TrendingRecipesScreen(),
       SavedScreen(),
       UserSettingScreen(),
     ];

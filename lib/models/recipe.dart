@@ -139,10 +139,10 @@ class RecipeData {
   final String? difficulty;
   final int? servings;
   final int? kcal;
-  final Nutrition? nutrition;
-  final Times? times;
-  final List<Ingredient>? ingredients;
-  final List<Step>? steps;
+  final NutritionDetail? nutrition;
+  final TimesDetail? times;
+  final List<IngredientDetail>? ingredients;
+  final List<StepDetail>? steps;
   final CategoryData? category;
   final bool? isFavorite;
 
@@ -184,16 +184,18 @@ class RecipeData {
     kcal: json["kcal"],
     nutrition: json["nutrition"] == null
         ? null
-        : Nutrition.fromJson(json["nutrition"]),
-    times: json["times"] == null ? null : Times.fromJson(json["times"]),
+        : NutritionDetail.fromJson(json["nutrition"]),
+    times: json["times"] == null ? null : TimesDetail.fromJson(json["times"]),
     ingredients: json["ingredients"] == null
         ? []
-        : List<Ingredient>.from(
-            json["ingredients"]!.map((x) => Ingredient.fromJson(x)),
+        : List<IngredientDetail>.from(
+            json["ingredients"]!.map((x) => IngredientDetail.fromJson(x)),
           ),
     steps: json["steps"] == null
         ? []
-        : List<Step>.from(json["steps"]!.map((x) => Step.fromJson(x))),
+        : List<StepDetail>.from(
+            json["steps"]!.map((x) => StepDetail.fromJson(x)),
+          ),
     category: json["category"] == null
         ? null
         : CategoryData.fromJson(json["category"]),
@@ -240,7 +242,7 @@ class CategoryData {
   Map<String, dynamic> toJson() => {"id": id, "code": code, "name": name};
 }
 
-class Ingredient {
+class IngredientDetail {
   final String? key;
   final String? name;
   final double? quantity;
@@ -248,7 +250,7 @@ class Ingredient {
   final String? note;
   final bool? isOptional;
 
-  Ingredient({
+  IngredientDetail({
     this.key,
     this.name,
     this.quantity,
@@ -257,14 +259,15 @@ class Ingredient {
     this.isOptional,
   });
 
-  factory Ingredient.fromJson(Map<String, dynamic> json) => Ingredient(
-    key: json["key"],
-    name: json["name"],
-    quantity: json["quantity"]?.toDouble(),
-    unit: json["unit"],
-    note: json["note"],
-    isOptional: json["isOptional"],
-  );
+  factory IngredientDetail.fromJson(Map<String, dynamic> json) =>
+      IngredientDetail(
+        key: json["key"],
+        name: json["name"],
+        quantity: json["quantity"]?.toDouble(),
+        unit: json["unit"],
+        note: json["note"],
+        isOptional: json["isOptional"],
+      );
 
   Map<String, dynamic> toJson() => {
     "key": key,
@@ -276,22 +279,29 @@ class Ingredient {
   };
 }
 
-class Nutrition {
+class NutritionDetail {
   final int? calories;
   final int? protein;
   final int? carbs;
   final int? fat;
   final int? fiber;
 
-  Nutrition({this.calories, this.protein, this.carbs, this.fat, this.fiber});
+  NutritionDetail({
+    this.calories,
+    this.protein,
+    this.carbs,
+    this.fat,
+    this.fiber,
+  });
 
-  factory Nutrition.fromJson(Map<String, dynamic> json) => Nutrition(
-    calories: json["calories"],
-    protein: json["protein"],
-    carbs: json["carbs"],
-    fat: json["fat"],
-    fiber: json["fiber"],
-  );
+  factory NutritionDetail.fromJson(Map<String, dynamic> json) =>
+      NutritionDetail(
+        calories: json["calories"],
+        protein: json["protein"],
+        carbs: json["carbs"],
+        fat: json["fat"],
+        fiber: json["fiber"],
+      );
 
   Map<String, dynamic> toJson() => {
     "calories": calories,
@@ -302,14 +312,14 @@ class Nutrition {
   };
 }
 
-class Step {
+class StepDetail {
   final int? stepNumber;
   final String? title;
   final String? content;
   final String? imageUrl;
   final int? durationMinutes;
 
-  Step({
+  StepDetail({
     this.stepNumber,
     this.title,
     this.content,
@@ -317,7 +327,7 @@ class Step {
     this.durationMinutes,
   });
 
-  factory Step.fromJson(Map<String, dynamic> json) => Step(
+  factory StepDetail.fromJson(Map<String, dynamic> json) => StepDetail(
     stepNumber: json["stepNumber"],
     title: json["title"],
     content: json["content"],
@@ -334,14 +344,18 @@ class Step {
   };
 }
 
-class Times {
+class TimesDetail {
   final int? prepTimeMinutes;
   final int? cookTimeMinutes;
   final int? totalTimeMinutes;
 
-  Times({this.prepTimeMinutes, this.cookTimeMinutes, this.totalTimeMinutes});
+  TimesDetail({
+    this.prepTimeMinutes,
+    this.cookTimeMinutes,
+    this.totalTimeMinutes,
+  });
 
-  factory Times.fromJson(Map<String, dynamic> json) => Times(
+  factory TimesDetail.fromJson(Map<String, dynamic> json) => TimesDetail(
     prepTimeMinutes: json["prepTimeMinutes"],
     cookTimeMinutes: json["cookTimeMinutes"],
     totalTimeMinutes: json["totalTimeMinutes"],
@@ -490,7 +504,7 @@ class SearchRecipeItem {
   final String? slug;
   final String? shortDescription;
   final String? imageUrl;
-  final Difficulty? difficulty;
+  final String? difficulty;
   final int? cookTimeMinutes;
   final String? cuisineType;
   final String? mealType;
@@ -499,7 +513,7 @@ class SearchRecipeItem {
   final double? proteinAlignmentScore;
   final double? meatFormAlignmentScore;
   final double? recommendScore;
-  final List<MatchedIngredient>? matchedIngredients;
+  final List<String>? matchedIngredients;
   final List<String>? missingIngredients;
   final bool? isFavorite;
 
@@ -532,7 +546,7 @@ class SearchRecipeItem {
         slug: json["slug"],
         shortDescription: json["shortDescription"],
         imageUrl: json["imageUrl"],
-        difficulty: difficultyValues.map[json["difficulty"]]!,
+        difficulty: json["difficulty"],
         cookTimeMinutes: json["cookTimeMinutes"],
         cuisineType: json["cuisineType"],
         mealType: json["mealType"],
@@ -543,11 +557,7 @@ class SearchRecipeItem {
         recommendScore: json["recommendScore"]?.toDouble(),
         matchedIngredients: json["matchedIngredients"] == null
             ? []
-            : List<MatchedIngredient>.from(
-                json["matchedIngredients"]!.map(
-                  (x) => matchedIngredientValues.map[x]!,
-                ),
-              ),
+            : List<String>.from(json["matchedIngredients"]!.map((x) => x)),
         missingIngredients: json["missingIngredients"] == null
             ? []
             : List<String>.from(json["missingIngredients"]!.map((x) => x)),
@@ -561,7 +571,7 @@ class SearchRecipeItem {
     "slug": slug,
     "shortDescription": shortDescription,
     "imageUrl": imageUrl,
-    "difficulty": difficultyValues.reverse[difficulty],
+    "difficulty": difficulty,
     "cookTimeMinutes": cookTimeMinutes,
     "cuisineType": cuisineType,
     "mealType": mealType,
@@ -572,28 +582,13 @@ class SearchRecipeItem {
     "recommendScore": recommendScore,
     "matchedIngredients": matchedIngredients == null
         ? []
-        : List<dynamic>.from(
-            matchedIngredients!.map((x) => matchedIngredientValues.reverse[x]),
-          ),
+        : List<dynamic>.from(matchedIngredients!.map((x) => x)),
     "missingIngredients": missingIngredients == null
         ? []
         : List<dynamic>.from(missingIngredients!.map((x) => x)),
     "isFavorite": isFavorite,
   };
 }
-
-enum Difficulty { EASY }
-
-final difficultyValues = EnumValues({"easy": Difficulty.EASY});
-
-enum MatchedIngredient { GARLIC, GROUND_BEEF, GROUND_PORK, SALT }
-
-final matchedIngredientValues = EnumValues({
-  "garlic": MatchedIngredient.GARLIC,
-  "ground-beef": MatchedIngredient.GROUND_BEEF,
-  "ground-pork": MatchedIngredient.GROUND_PORK,
-  "salt": MatchedIngredient.SALT,
-});
 
 class SearchRecipePagination {
   final int? page;
@@ -619,38 +614,36 @@ class SearchRecipePagination {
   };
 }
 
-class FavouriteRecipeResponse {
+class RecipeTrendingResponse {
   final bool? error;
-  final FavouriteData? data;
+  final TrendingData? data;
 
-  FavouriteRecipeResponse({this.error, this.data});
+  RecipeTrendingResponse({this.error, this.data});
 
-  factory FavouriteRecipeResponse.fromJson(Map<String, dynamic> json) =>
-      FavouriteRecipeResponse(
+  factory RecipeTrendingResponse.fromJson(Map<String, dynamic> json) =>
+      RecipeTrendingResponse(
         error: json["error"],
-        data: json["data"] == null
-            ? null
-            : FavouriteData.fromJson(json["data"]),
+        data: json["data"] == null ? null : TrendingData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {"error": error, "data": data?.toJson()};
 }
 
-class FavouriteData {
-  final List<FavouriteItem>? items;
-  final FavouritePagination? pagination;
+class TrendingData {
+  final List<TrendingItem>? items;
+  final Pagination? pagination;
 
-  FavouriteData({this.items, this.pagination});
+  TrendingData({this.items, this.pagination});
 
-  factory FavouriteData.fromJson(Map<String, dynamic> json) => FavouriteData(
+  factory TrendingData.fromJson(Map<String, dynamic> json) => TrendingData(
     items: json["items"] == null
         ? []
-        : List<FavouriteItem>.from(
-            json["items"]!.map((x) => FavouriteItem.fromJson(x)),
+        : List<TrendingItem>.from(
+            json["items"]!.map((x) => TrendingItem.fromJson(x)),
           ),
     pagination: json["pagination"] == null
         ? null
-        : FavouritePagination.fromJson(json["pagination"]),
+        : Pagination.fromJson(json["pagination"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -661,97 +654,60 @@ class FavouriteData {
   };
 }
 
-class FavouriteItem {
+class TrendingItem {
   final String? id;
-  final String? appId;
-  final String? userId;
-  final String? recipeId;
-  final String? recipeCode;
-  final String? recipeName;
-  final String? recipeSlug;
-  final String? recipeImageUrl;
-  final String? shortDescription;
+  final String? name;
+  final String? imageUrl;
+  final int? totalTimeMinutes;
   final String? difficulty;
-  final int? cookTimeMinutes;
-  final String? cuisineType;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final int? v;
+  final bool? isFavorite;
+  final double? score;
 
-  FavouriteItem({
+  TrendingItem({
     this.id,
-    this.appId,
-    this.userId,
-    this.recipeId,
-    this.recipeCode,
-    this.recipeName,
-    this.recipeSlug,
-    this.recipeImageUrl,
-    this.shortDescription,
+    this.name,
+    this.imageUrl,
+    this.totalTimeMinutes,
     this.difficulty,
-    this.cookTimeMinutes,
-    this.cuisineType,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
+    this.score,
+    this.isFavorite,
   });
 
-  factory FavouriteItem.fromJson(Map<String, dynamic> json) => FavouriteItem(
+  factory TrendingItem.fromJson(Map<String, dynamic> json) => TrendingItem(
     id: json["_id"],
-    appId: json["appId"],
-    userId: json["userId"],
-    recipeId: json["recipeId"],
-    recipeCode: json["recipeCode"],
-    recipeName: json["recipeName"],
-    recipeSlug: json["recipeSlug"],
-    recipeImageUrl: json["recipeImageUrl"],
-    shortDescription: json["shortDescription"],
+    name: json["name"],
+    imageUrl: json["imageUrl"],
+    totalTimeMinutes: json["totalTimeMinutes"],
     difficulty: json["difficulty"],
-    cookTimeMinutes: json["cookTimeMinutes"],
-    cuisineType: json["cuisineType"],
-    createdAt: json["createdAt"] == null
-        ? null
-        : DateTime.parse(json["createdAt"]),
-    updatedAt: json["updatedAt"] == null
-        ? null
-        : DateTime.parse(json["updatedAt"]),
-    v: json["__v"],
+    score: json["score"]?.toDouble(),
+    isFavorite: json["isFavorite"],
   );
 
   Map<String, dynamic> toJson() => {
     "_id": id,
-    "appId": appId,
-    "userId": userId,
-    "recipeId": recipeId,
-    "recipeCode": recipeCode,
-    "recipeName": recipeName,
-    "recipeSlug": recipeSlug,
-    "recipeImageUrl": recipeImageUrl,
-    "shortDescription": shortDescription,
+    "name": name,
+    "imageUrl": imageUrl,
+    "totalTimeMinutes": totalTimeMinutes,
     "difficulty": difficulty,
-    "cookTimeMinutes": cookTimeMinutes,
-    "cuisineType": cuisineType,
-    "createdAt": createdAt?.toIso8601String(),
-    "updatedAt": updatedAt?.toIso8601String(),
-    "__v": v,
+    "score": score,
+    "isFavorite": isFavorite,
   };
 }
 
-class FavouritePagination {
+class Pagination {
   final int? page;
   final int? limit;
   final int? total;
   final int? totalPages;
 
-  FavouritePagination({this.page, this.limit, this.total, this.totalPages});
+  Pagination({this.page, this.limit, this.total, this.totalPages});
 
-  factory FavouritePagination.fromJson(Map<String, dynamic> json) =>
-      FavouritePagination(
-        page: json["page"],
-        limit: json["limit"],
-        total: json["total"],
-        totalPages: json["totalPages"],
-      );
+  factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
+    page: json["page"],
+    limit: json["limit"],
+    total: json["total"],
+    totalPages: json["totalPages"],
+  );
 
   Map<String, dynamic> toJson() => {
     "page": page,

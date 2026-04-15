@@ -1,6 +1,7 @@
 import 'package:ai_menu_flutter/features/detail_recipes/detail_recipe_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme/colors.dart';
 import '../../navigation/widgets.dart';
@@ -9,7 +10,7 @@ import '../home/step3_result/step3_result_viewmodel.dart';
 class DetailRecipeHero extends StatelessWidget {
   const DetailRecipeHero({super.key, required this.recipe});
 
-  final Step3ResultRecipe recipe;
+  final RecipeDetail recipe;
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +55,14 @@ class DetailRecipeHero extends StatelessWidget {
 }
 
 class DetailRecipeHeroBackground extends StatelessWidget {
-  const DetailRecipeHeroBackground({super.key, required this.recipe});
+  const DetailRecipeHeroBackground({
+    super.key,
+    required this.recipe,
+    required this.viewModel,
+  });
 
   final RecipeDetail recipe;
+  final DetailRecipeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -89,15 +95,22 @@ class DetailRecipeHeroActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<DetailRecipeViewModel>();
     return AppHeaderActionsWrapper(
       leading: AppNavActionButton(
         icon: Icons.arrow_back_rounded,
         onTap: () => Navigator.pop(context),
       ),
-      trailing: const Row(
+      trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppNavActionButton(icon: Icons.favorite_border_rounded),
+          AppNavActionButton(
+            icon: viewModel.isFavorite
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
+            onTap: viewModel.toggleFavorite,
+            color: viewModel.isFavorite ? Colors.red : null,
+          ),
           SizedBox(width: 8),
           AppNavActionButton(icon: Icons.share_rounded),
         ],
@@ -133,7 +146,7 @@ class DetailRecipeInfoBar extends StatelessWidget {
           const DetailRecipeInfoDivider(),
           DetailRecipeInfoTile(
             icon: Icons.local_fire_department_rounded,
-            label: recipe.calories.toString(),
+            label: recipe.calories,
           ),
         ],
       ),

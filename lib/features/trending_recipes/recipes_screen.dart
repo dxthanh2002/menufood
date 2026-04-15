@@ -1,32 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../services/app_service.dart';
 import '../bottom_navigation/root-tab-app-bar.dart';
 import '../../theme/colors.dart';
 import 'recipes_viewmodel.dart';
 import 'widgets/recipe_card.dart';
 
-class RecipesScreen extends StatelessWidget {
-  const RecipesScreen({super.key});
+class TrendingRecipesScreen extends StatelessWidget {
+  const TrendingRecipesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RecipesViewModel(),
+      create: (_) => TrendingRecipesViewModel(),
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: RootTabAppBar(title: 'Recipes'),
-        body: const RecipesContent(),
+        body: const TrendingRecipesContent(),
       ),
     );
   }
 }
 
-class RecipesContent extends StatelessWidget {
-  const RecipesContent({super.key});
+class TrendingRecipesContent extends StatefulWidget {
+  const TrendingRecipesContent({super.key});
+
+  @override
+  State<TrendingRecipesContent> createState() => _TrendingRecipesContentState();
+}
+
+class _TrendingRecipesContentState extends State<TrendingRecipesContent> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<RecipesViewModel>();
+    final appService = context.watch<AppService>();
+    if (!appService.initialized) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: AppColors.primary),
+              SizedBox(height: 16),
+              Text(
+                'Initializing...',
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final viewModel = context.watch<TrendingRecipesViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.loadTrendingRecipes();
+    });
 
     return Column(
       children: [
@@ -46,16 +84,24 @@ class RecipesContent extends StatelessWidget {
               ],
             ),
             child: TextField(
+              controller: _searchController,
+              onChanged: (value) => viewModel.searchRecipes(value),
               decoration: InputDecoration(
                 hintText: 'Search recipes, ingredients...',
                 hintStyle: const TextStyle(
                   color: Color(0xFF94A3B8),
                   fontSize: 14,
-                ), // slate-400
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: Color(0xFF94A3B8),
-                ), // slate-400
+                ),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF94A3B8)),
+                suffixIcon: viewModel.searchResults.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          viewModel.clearSearch();
+                        },
+                      )
+                    : null,
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 16,
@@ -66,6 +112,93 @@ class RecipesContent extends StatelessWidget {
           ),
         ),
 
+        // Show search results or categories + trending
+        Expanded(
+          child: viewModel.isSearching || viewModel.searchResults.isNotEmpty
+              ? _buildSearchResults(viewModel)
+              : _buildMainContent(viewModel),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchResults(TrendingRecipesViewModel viewModel) {
+    if (viewModel.isSearching) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
+    }
+
+    if (viewModel.searchResults.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64, color: AppColors.textSecondary),
+            SizedBox(height: 16),
+            Text(
+              'No recipes found',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+      itemCount: viewModel.searchResults.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: RecipeCard(
+            recipe: viewModel.searchResults[index],
+            onTap: () {
+              // HAS onTap!
+              viewModel.navigateToDetail(
+                context,
+                viewModel.searchResults[index].id!,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMainContent(TrendingRecipesViewModel viewModel) {
+    if (viewModel.isLoadingTrending) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
+    }
+
+    if (viewModel.trendingRecipes.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.restaurant, size: 64, color: AppColors.textSecondary),
+            SizedBox(height: 16),
+            Text(
+              'No recipes available',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
         // Categories Section
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -157,11 +290,19 @@ class RecipesContent extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-            itemCount: viewModel.recipes.length,
+            itemCount: viewModel.trendingRecipes.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 24),
-                child: RecipeCard(recipe: viewModel.recipes[index]),
+                child: RecipeCard(
+                  recipe: viewModel.trendingRecipes[index],
+                  onTap: () {
+                    viewModel.navigateToDetail(
+                      context,
+                      viewModel.trendingRecipes[index].id!,
+                    );
+                  },
+                ),
               );
             },
           ),

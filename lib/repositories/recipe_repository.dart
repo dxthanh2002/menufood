@@ -56,13 +56,27 @@ class RecipeRepository {
 
   static Future<RecipeSuggestionResponse> getRecipeSuggestions() async {
     final response = await api.get('app-menu-ai/recipes/suggestions/random');
-
     return RecipeSuggestionResponse.fromJson(response.data);
   }
 
-  static Future<FavouriteRecipeResponse> getFavouritedRecipe() async {
-    final response = await api.get('app-menu-ai/favorites');
+  static Future<RecipeTrendingResponse> getRecipeTrendings({
+    int limit = 20,
+    int page = 1,
+  }) async {
+    final response = await api.get(
+      'app-menu-ai/recipes/trending?limit=$limit&page=$page',
+    );
 
-    return FavouriteRecipeResponse.fromJson(response.data);
+    return RecipeTrendingResponse.fromJson(response.data);
+  }
+
+  static Future<List<SearchRecipeItem>> searchRecipeTrendings({
+    required String name,
+  }) async {
+    final response = await api.get('app-menu-ai/recipes/search?q=$name');
+
+    // Parse the response correctly
+    final data = response.data['data']['items'] as List;
+    return data.map((item) => SearchRecipeItem.fromJson(item)).toList();
   }
 }

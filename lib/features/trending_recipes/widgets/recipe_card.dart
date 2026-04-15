@@ -1,9 +1,10 @@
+import 'package:ai_menu_flutter/utils/format.dart';
 import 'package:flutter/material.dart';
 import '../../../models/recipe.dart';
 import '../../../theme/colors.dart';
 
 class RecipeCard extends StatelessWidget {
-  final Recipe recipe;
+  final TrendingItem recipe;
   final VoidCallback? onTap;
 
   const RecipeCard({super.key, required this.recipe, this.onTap});
@@ -36,56 +37,56 @@ class RecipeCard extends StatelessWidget {
                     top: Radius.circular(24),
                   ),
                   child: Image.network(
-                    recipe.imageUrl,
+                    recipe.imageUrl!,
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
                 ),
                 // Bookmark button
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.bookmark_outline,
-                        size: 20,
-                        color: Colors.black87,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   top: 12,
+                //   right: 12,
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: Colors.white.withOpacity(0.8),
+                //       shape: BoxShape.circle,
+                //     ),
+                //     child: IconButton(
+                //       icon: const Icon(
+                //         Icons.bookmark_outline,
+                //         size: 20,
+                //         color: Colors.black87,
+                //       ),
+                //       onPressed: () {},
+                //     ),
+                //   ),
+                // ),
                 // Popular Tag
-                if (recipe.isPopular)
-                  Positioned(
-                    bottom: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'POPULAR',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                    ),
-                  ),
+                // if (recipe.isPopular)
+                //   Positioned(
+                //     bottom: 12,
+                //     left: 12,
+                //     child: Container(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 12,
+                //         vertical: 4,
+                //       ),
+                //       decoration: BoxDecoration(
+                //         color: AppColors.primary.withOpacity(0.9),
+                //         borderRadius: BorderRadius.circular(20),
+                //       ),
+                //       child: const Text(
+                //         'POPULAR',
+                //         style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 10,
+                //           fontWeight: FontWeight.bold,
+                //           letterSpacing: 1.0,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
 
@@ -96,7 +97,7 @@ class RecipeCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    recipe.title,
+                    recipe.name!,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -109,7 +110,7 @@ class RecipeCard extends StatelessWidget {
                       Icon(Icons.schedule, size: 16, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Text(
-                        recipe.duration,
+                        formatDuration(recipe.totalTimeMinutes),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
@@ -119,7 +120,7 @@ class RecipeCard extends StatelessWidget {
                       Icon(Icons.bolt, size: 16, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Text(
-                        recipe.difficulty,
+                        capitalize(recipe.difficulty!) ?? "Medium",
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
@@ -129,7 +130,7 @@ class RecipeCard extends StatelessWidget {
                       const Icon(Icons.star, size: 16, color: Colors.amber),
                       const SizedBox(width: 4),
                       Text(
-                        recipe.rating.toString(),
+                        recipe.score.toString(),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,

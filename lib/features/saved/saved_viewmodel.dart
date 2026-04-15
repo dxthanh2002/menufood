@@ -1,16 +1,27 @@
 // lib/features/saved/saved_recipes_viewmodel.dart
+import 'dart:async';
+
+import 'package:ai_menu_flutter/repositories/favourite_repository.dart';
 import 'package:flutter/material.dart';
+import '../../models/favourite.dart';
 import '../../models/recipe.dart';
 import '../../navigation/routes.dart';
-import '../../repositories/recipe_repository.dart';
-import '../home/step3_result/step3_result_viewmodel.dart';
+import '../../utils/console.dart';
+import '../../utils/format.dart';
 
 class SavedRecipesViewModel extends ChangeNotifier {
+  static SavedRecipesViewModel? _instance;
   SavedRecipesViewModel() {
+    _instance = this;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadSavedRecipes();
     });
   }
+
+  static void refreshSavedRecipes() {
+    _instance?.loadSavedRecipes();
+  }
+
   final List<String> _categories = [
     'All',
     'Quick',
@@ -20,7 +31,7 @@ class SavedRecipesViewModel extends ChangeNotifier {
   ];
 
   String _selectedCategory = 'All';
-  bool _isLoading = false;
+  bool _isLoadingSaved = false;
   String? _errorMessage;
 
   // Store API data
@@ -29,10 +40,18 @@ class SavedRecipesViewModel extends ChangeNotifier {
 
   List<String> get categories => _categories;
   String get selectedCategory => _selectedCategory;
-  bool get isLoading => _isLoading;
+  bool get isLoadingSaved => _isLoadingSaved;
   String? get errorMessage => _errorMessage;
 
+  // In SavedRecipesViewModel
+  String _searchQuery = '';
+  String get searchQuery => _searchQuery;
+  List<Map<String, dynamic>> _searchResults = [];
+
   List<Map<String, dynamic>> get filteredRecipes {
+    if (_searchQuery.isNotEmpty) {
+      return _searchResults;
+    }
     if (_selectedCategory == 'All') {
       return _savedRecipes;
     }
@@ -40,6 +59,29 @@ class SavedRecipesViewModel extends ChangeNotifier {
       final tag = item['typeTag'] as String;
       return tag == _selectedCategory;
     }).toList();
+  }
+
+  void searchRecipes(String query) {
+    _searchQuery = query;
+
+    if (query.isEmpty) {
+      _searchResults = [];
+      notifyListeners();
+      return;
+    }
+
+    _searchResults = _savedRecipes.where((item) {
+      final recipe = item['recipe'] as Recipe;
+      return recipe.title.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    notifyListeners();
+  }
+
+  void clearSearch() {
+    _searchQuery = '';
+    _searchResults = [];
+    notifyListeners();
   }
 
   void selectCategory(String category) {
@@ -50,82 +92,66 @@ class SavedRecipesViewModel extends ChangeNotifier {
   Future<void> removeSavedRecipe(String recipeId) async {
     try {
       // Call API to remove from favorites
-      // await RecipeRepository.removeFavourite(recipeId);
+      final success = await FavouriteRepository.removeFavouritedRecipe(
+        recipeId: recipeId,
+      );
+      if (success) {
+        _savedRecipes.removeWhere(
+          (item) => (item['recipe'] as Recipe).id == recipeId,
+        );
+        _favouriteItems.removeWhere((item) => item.recipeId == recipeId);
+        notifyListeners();
+      } else {
+        Console.error("REMOVE SAVED");
+        Console.error("REMOVE SAVED");
+        Console.error("REMOVE SAVED");
+      }
 
       // Remove locally
-      _savedRecipes.removeWhere(
-        (item) => (item['recipe'] as Recipe).id == recipeId,
-      );
-      _favouriteItems.removeWhere((item) => item.recipeId == recipeId);
-      notifyListeners();
     } catch (e) {
       debugPrint('Error removing recipe: $e');
     }
   }
 
   Future<void> loadSavedRecipes() async {
-    _isLoading = true;
+    _isLoadingSaved = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await RecipeRepository.getFavouritedRecipe();
+      final response = await FavouriteRepository.getFavouritedRecipe();
 
       if (response.error == true) {
         _errorMessage = 'Failed to load saved recipes';
         _savedRecipes = [];
       } else {
         _favouriteItems = response.data?.items ?? [];
-        _convertFavouritesToRecipes();
+        _savedRecipes = _favouriteItems.map((item) {
+          return {
+            'recipe': Recipe(
+              id: item.recipeId ?? '',
+              title: item.recipeName ?? '',
+              imageUrl: item.recipeImageUrl ?? '',
+              duration: formatDuration(item.cookTimeMinutes),
+              difficulty: item.difficulty ?? 'Medium',
+              rating: 4.5, // Default rating
+            ),
+            'typeTag': item.shortDescription?.toUpperCase() ?? 'RECIPE',
+          };
+        }).toList();
       }
     } catch (e) {
       debugPrint('Error loading saved recipes: $e');
       _errorMessage = 'Error loading recipes: $e';
       _savedRecipes = [];
     } finally {
-      _isLoading = false;
+      _isLoadingSaved = false;
       notifyListeners();
     }
   }
 
-  void _convertFavouritesToRecipes() {
-    _savedRecipes = _favouriteItems.map((item) {
-      return {
-        'recipe': Recipe(
-          id: item.recipeId ?? '',
-          title: item.recipeName ?? '',
-          imageUrl: item.recipeImageUrl ?? '',
-          duration: _formatDuration(item.cookTimeMinutes),
-          difficulty: item.difficulty ?? 'Medium',
-          rating: 4.5, // Default rating
-        ),
-        'typeTag': item.cuisineType?.toUpperCase() ?? 'RECIPE',
-      };
-    }).toList();
-  }
-
-  String _formatDuration(int? minutes) {
-    if (minutes == null) return '30 mins';
-    if (minutes < 60) return '$minutes mins';
-    final hours = minutes ~/ 60;
-    final remainingMins = minutes % 60;
-    if (remainingMins == 0) return '$hours hr';
-    return '$hours hr $remainingMins mins';
-  }
-
-  String getRecipeId(Recipe recipe) {
-    // Try to find matching favourite item for more details
-    final favouriteItem = _favouriteItems.firstWhere(
-      (item) => item.recipeName == recipe.title,
-      orElse: () => FavouriteItem(),
-    );
-
-    return favouriteItem.id!;
-  }
-
   void navigateToDetail(BuildContext context, Recipe recipe) {
-    final recipeId = getRecipeId(recipe);
-    Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipeId);
+    Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipe.id);
   }
 
   // Refresh method

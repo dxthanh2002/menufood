@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/console.dart';
 
@@ -32,7 +33,16 @@ class ScannerViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
+
     try {
+      final status = await Permission.camera.request();
+
+      if (!status.isGranted) {
+        _errorMessage = "Camera permission denied";
+        notifyListeners();
+        return;
+      }
+
       _cameras = await availableCameras();
       if (_cameras.isEmpty) return;
       await _startCamera(_cameras[_currentCameraIndex]);
@@ -120,6 +130,7 @@ class ScannerViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
+
     if (_controller == null || !_isInitialized || _isProcessing) return;
 
     _isProcessing = true;

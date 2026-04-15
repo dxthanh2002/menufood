@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme/colors.dart';
-import '../home/step3_result/step3_result_viewmodel.dart';
 import 'detail_recipe_viewmodel.dart';
 import 'detail_recipe_widgets.dart';
 
@@ -15,7 +14,7 @@ class DetailRecipeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DetailRecipeViewModel()..loadRecipeDetails(recipeId),
+      create: (_) => DetailRecipeViewModel(recipeId)..loadRecipeDetails(),
       child: const _DetailRecipeContent(),
     );
   }
@@ -69,7 +68,10 @@ class _DetailRecipeContent extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: DetailRecipeHeroBackground(recipe: recipe),
+            child: DetailRecipeHeroBackground(
+              recipe: recipe,
+              viewModel: viewModel,
+            ),
           ),
           Positioned.fill(
             child: SingleChildScrollView(
@@ -111,7 +113,7 @@ class _DetailRecipeContent extends StatelessWidget {
                       DetailRecipeSectionTitle(
                         title: 'Ingredients',
                         trailing: Text(
-                          recipe.servings.toString(),
+                          "${recipe.ingredients.length} servings",
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,

@@ -29,9 +29,22 @@ class _SavedScreenState extends State<SavedScreen> {
   }
 }
 
-class _SavedScreenContent extends StatelessWidget {
+class _SavedScreenContent extends StatefulWidget {
   final bool showBackButton;
   const _SavedScreenContent({required this.showBackButton});
+
+  @override
+  State<_SavedScreenContent> createState() => __SavedScreenContentState();
+}
+
+class __SavedScreenContentState extends State<_SavedScreenContent> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +76,7 @@ class _SavedScreenContent extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: RootTabAppBar(
         title: 'Saved Recipes',
-        leading: showBackButton
+        leading: widget.showBackButton
             ? RootTabAppBar.buildActionButton(
                 icon: const Icon(
                   Icons.arrow_back_rounded,
@@ -75,10 +88,10 @@ class _SavedScreenContent extends StatelessWidget {
       ),
       body: Column(
         children: [
-          _buildSearchBar(),
-          _buildCategories(viewModel),
+          _buildSearchBar(context),
+          // _buildCategories(viewModel),
           Expanded(
-            child: viewModel.isLoading
+            child: viewModel.isLoadingSaved
                 ? const Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   )
@@ -89,7 +102,9 @@ class _SavedScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final viewModel = context.watch<SavedRecipesViewModel>();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -104,13 +119,27 @@ class _SavedScreenContent extends StatelessWidget {
             ),
           ],
         ),
-        child: const TextField(
+        child: TextField(
+          controller: _searchController,
+          onChanged: (value) => viewModel.searchRecipes(value),
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Search saved recipes',
-            hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
-            prefixIcon: Icon(Icons.search, color: Color(0xFF94A3B8)),
-            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+            prefixIcon: const Icon(Icons.search, color: Color(0xFF94A3B8)),
+            suffixIcon: viewModel.searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear, size: 20),
+                    onPressed: () {
+                      _searchController.clear();
+                      viewModel.clearSearch();
+                    },
+                  )
+                : null,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 16,
+            ),
           ),
         ),
       ),
@@ -229,7 +258,12 @@ class _SavedScreenContent extends StatelessWidget {
               onTap: () =>
                   viewModel.navigateToDetail(context, data['recipe'] as Recipe),
               onFavoriteTap: () {
-                viewModel.removeSavedRecipe((data['recipe'] as Recipe).id);
+                _showRemoveConfirmation(
+                  context,
+                  () => viewModel.removeSavedRecipe(
+                    (data['recipe'] as Recipe).id,
+                  ),
+                );
               },
             ),
           );
@@ -285,7 +319,10 @@ class _SavedScreenContent extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                           onPressed: () {
-                            viewModel.removeSavedRecipe(recipe.id);
+                            _showRemoveConfirmation(
+                              context,
+                              () => viewModel.removeSavedRecipe(recipe.id),
+                            );
                           },
                         ),
                       ),
@@ -354,4 +391,121 @@ class _SavedScreenContent extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showRemoveConfirmation(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierColor: Colors.black.withOpacity(0.4),
+    builder: (context) => Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.favorite_outline,
+                size: 48,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Title
+            Text(
+              'Remove Recipe?',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Description
+            Text(
+              'Are you sure you want to remove this recipe from your saved list?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      side: BorderSide(
+                        color: AppColors.textSecondary.withOpacity(0.2),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      onConfirm();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Remove',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
