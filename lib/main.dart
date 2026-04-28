@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'navigation/router.dart';
+import 'services/ads/init_sdk.dart';
 import 'services/app_service.dart';
 import 'theme/theme_data.dart';
 import 'utils/console.dart';
@@ -19,6 +20,14 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!Platform.isLinux && !Platform.isWindows) {
+    try {
+      await InitManager.initTopon();
+      InitManager.startPreLoadAd();
+    } catch (e) {
+      Console.error('❌ TopOn init/preload failed: $e');
+    }
+  }
 
   runApp(const MyApp());
 }

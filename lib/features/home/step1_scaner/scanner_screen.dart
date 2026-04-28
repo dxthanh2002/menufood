@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ai_menu_flutter/services/ads/rewarder_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -68,11 +69,16 @@ class _ScannerContentState extends State<_ScannerContent>
       return;
     }
 
-    Navigator.pushNamed(
-      context,
-      Routes.confirmIngredients,
-      arguments: vm.imagePath,
-    );
+    // Check if ad is ready
+    final isAdReady = await RewarderManager.isAdReady();
+
+    if (isAdReady) {
+      // Show modal that forces user to watch ad
+      await _showWatchAdModal(vm);
+    } else {
+      // No ad ready, proceed directly
+      _proceedToConfirmIngredients(vm);
+    }
   }
 
   Future<void> _onUploadPressed() async {
@@ -89,12 +95,109 @@ class _ScannerContentState extends State<_ScannerContent>
     }
 
     if (isImageSelected) {
-      Navigator.pushNamed(
-        context,
-        Routes.confirmIngredients,
-        arguments: vm.imagePath,
-      );
+      // Check if ad is ready
+      final isAdReady = await RewarderManager.isAdReady();
+
+      if (isAdReady) {
+        // Show modal that forces user to watch ad
+        await _showWatchAdModal(vm);
+      } else {
+        // No ad ready, proceed directly
+        _proceedToConfirmIngredients(vm);
+      }
     }
+  }
+
+  Future<void> _showWatchAdModal(ScannerViewModel vm) async {
+    // Show modal dialog
+    final shouldProceed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // User must choose an option
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_circle_filled,
+                  color: AppColors.primary,
+                  size: 64,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Watch Ad to Analyze',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  'Please watch a short ad to proceed with image analysis.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
+                ),
+                SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.inter(color: Colors.white60),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Watch Ad',
+                          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (shouldProceed == true) {
+      // Show the ad
+      await RewarderManager.startShowAutoLoadRewardedVideoAd();
+      await Future.delayed(Duration(seconds: 2));
+
+      // Proceed to analysis after ad
+      _proceedToConfirmIngredients(vm);
+    }
+  }
+
+  void _proceedToConfirmIngredients(ScannerViewModel vm) {
+    Navigator.pushNamed(
+      context,
+      Routes.confirmIngredients,
+      arguments: vm.imagePath,
+    );
   }
 
   @override

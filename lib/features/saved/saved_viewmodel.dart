@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../models/favourite.dart';
 import '../../models/recipe.dart';
 import '../../navigation/routes.dart';
+import '../../services/ad_service.dart';
 import '../../utils/console.dart';
 import '../../utils/format.dart';
 
@@ -150,7 +151,13 @@ class SavedRecipesViewModel extends ChangeNotifier {
     }
   }
 
-  void navigateToDetail(BuildContext context, Recipe recipe) {
+  void navigateToDetail(BuildContext context, Recipe recipe) async {
+    final isReady = AdTimerService().canShowAd;
+    if (isReady) {
+      AdTimerService().showAd(AdType.interstitial);
+      await Future.delayed(Duration(milliseconds: 400));
+    }
+
     Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipe.id);
   }
 

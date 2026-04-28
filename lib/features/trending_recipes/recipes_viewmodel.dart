@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/recipe.dart';
 import '../../navigation/routes.dart';
 import '../../repositories/recipe_repository.dart';
+import '../../services/ad_service.dart';
 import '../../utils/console.dart';
 
 class TrendingRecipesViewModel extends ChangeNotifier {
@@ -116,7 +117,13 @@ class TrendingRecipesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void navigateToDetail(BuildContext context, String recipeId) {
+  void navigateToDetail(BuildContext context, String recipeId) async {
+    final isReady = AdTimerService().canShowAd;
+    if (isReady) {
+      AdTimerService().showAd(AdType.interstitial);
+      await Future.delayed(Duration(milliseconds: 400));
+    }
+
     Navigator.pushNamed(context, Routes.detailRecipe, arguments: recipeId);
   }
 

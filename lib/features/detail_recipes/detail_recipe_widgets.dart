@@ -1,4 +1,5 @@
 import 'package:ai_menu_flutter/features/detail_recipes/detail_recipe_viewmodel.dart';
+import 'package:ai_menu_flutter/services/ad_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,15 @@ class DetailRecipeHeroActions extends StatelessWidget {
     return AppHeaderActionsWrapper(
       leading: AppNavActionButton(
         icon: Icons.arrow_back_rounded,
-        onTap: () => Navigator.pop(context),
+        onTap: () async {
+          final isReady = AdTimerService().canShowAd;
+          if (isReady) {
+            AdTimerService().showAd(AdType.interstitial);
+            await Future.delayed(Duration(milliseconds: 400));
+          }
+
+          Navigator.pop(context);
+        },
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

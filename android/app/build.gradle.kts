@@ -34,10 +34,50 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+
         }
+
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+
     }
 }
+
+repositories {
+    flatDir {
+        dirs("libs")
+    }
+    maven {
+        url = uri("https://jfrog.anythinktech.com/artifactory/overseas_sdk")
+    }
+}
+
+dependencies {
+
+    // Thinkup SDK (Necessary)
+    implementation("com.thinkup.sdk:core-tpn:6.5.10")
+    implementation("com.thinkup.sdk:nativead-tpn:6.5.10")
+    implementation("com.thinkup.sdk:banner-tpn:6.5.10")
+    implementation("com.thinkup.sdk:interstitial-tpn:6.5.10")
+    implementation("com.thinkup.sdk:rewardedvideo-tpn:6.5.10")
+    implementation("com.thinkup.sdk:splash-tpn:6.5.10")
+
+    // Androidx (Necessary)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.browser:browser:1.4.0")
+
+    // AdMob
+    implementation("com.thinkup.sdk:adapter-tpn-admob:6.5.10")
+    implementation("com.google.android.gms:play-services-ads:24.4.0")
+
+    // Tramini
+    implementation("com.thinkup.sdk:tramini-plugin-tpn:6.5.10")
+}
+
 
 flutter {
     source = "../.."
